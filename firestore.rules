@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global safety net - default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions for zero-trust security
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Validation helper for User entries
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'displayName', 'role', 'location'])
+        && data.uid == request.auth.uid
+        && data.displayName is string
+        && data.displayName.size() <= 80
+        && data.role in ['foyer', 'jeune', 'etudiant', 'rural', 'invite']
+        && data.location is string
+        && data.location.size() <= 80;
+    }
+
+    // User profiles rules safeguarding PII
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data)
+        && request.resource.data.uid == resource.data.uid; // prevent UID spoofing
+      allow delete: if false; // profiles are permanent for tax/cooperative tracing
+    }
+  }
+}

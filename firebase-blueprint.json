@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "Artisan user profile on the PIE platform",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique Firebase Auth identifier for the user"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Full name or selected display name"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User email address"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["foyer", "jeune", "etudiant", "rural", "invite"],
+          "description": "User profile cohort targeting inclusive UX"
+        },
+        "location": {
+          "type": "string",
+          "description": "City or rural commune of the user, e.g. Tafraout, Chefchaouen"
+        },
+        "earnings": {
+          "type": "number",
+          "description": "Total sales or financial income generated through the marketplace"
+        },
+        "coursesCompleted": {
+          "type": "number",
+          "description": "Total courses successfully finalized"
+        },
+        "level": {
+          "type": "string",
+          "description": "Gamification master class level, e.g., 'Apprentie Maâlma'"
+        },
+        "xp": {
+          "type": "number",
+          "description": "Experience points collected during lessons"
+        },
+        "streak": {
+          "type": "number",
+          "description": "Daily active continuous streak"
+        }
+      },
+      "required": ["uid", "displayName", "email", "role", "location"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "Document holding each artisan's master profile and progress"
+    }
+  }
+}

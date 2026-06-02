@@ -1,0 +1,6 @@
+{
+  "name": "Hirfa - Plateforme d'Apprentissage & Artisanat Marocain",
+  "description": "Plateforme inclusive d'apprentissage de métiers (Hirfa) et marketplace d'artisanat marocain, universellement accessible par icônes, simulations, tutoriels vidéos et commandes vocales (Darija, Tamazight, Français) pour tous les artisans, passionnés, hommes et femmes au Maroc.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

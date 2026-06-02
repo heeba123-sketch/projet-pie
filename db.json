@@ -1,0 +1,591 @@
+{
+  "kits": [
+    {
+      "id": "kit-1",
+      "title": {
+        "ar": "صندوق الصوف كوكو المبتدئ",
+        "tmz": "Box n'Koko Tamzwarout",
+        "fr": "Kit Débutant Coco - Crochet",
+        "en": "Coco Starter Crochet Kit"
+      },
+      "price": 120,
+      "description": {
+        "ar": "صندوق كامل لتعليم الكروشي الأول. فيه صوف كوكو غليظ وإبرة 4 ملم.",
+        "tmz": "Box i-lemden krouchi. Ssof ikhedmen d needle 4mm.",
+        "fr": "Le coffret parfait pour débuter le crochet. Contient de la laine épaisse Coco blanche et un crochet de 4mm.",
+        "en": "The perfect box to start crocheting. Includes thick white Coco yarn and a 4mm crochet."
+      },
+      "whatsInside": [
+        {
+          "ar": "حزمة صوف طبيعي 100 غرام",
+          "tmz": "Ssof natural 100g",
+          "fr": "Pelote de laine blanche 100% coton (100g)",
+          "en": "White cotton yarn skein (100g)"
+        },
+        {
+          "ar": "كروشي خشبي 4 ملم",
+          "tmz": "Crochet n'akchoud 4mm",
+          "fr": "Crochet ergonomique en bambou (4mm)",
+          "en": "Ergonomic bamboo hook (4mm)"
+        },
+        {
+          "ar": "إبرة بلاستيكية لجمع الخيط",
+          "tmz": "Needle n'Plastik",
+          "fr": "Aiguille à laine en plastique",
+          "en": "Plastic finishing needle"
+        },
+        {
+          "ar": "بطاقات اللمس التفسيرية",
+          "tmz": "Tewlafin l'maâlma",
+          "fr": "Fiches tactiles de points en relief",
+          "en": "Tactile stitch guides with visual relief"
+        }
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=600",
+      "colorHex": "#F5F5DC"
+    },
+    {
+      "id": "kit-2",
+      "title": {
+        "ar": "صندوق الشغف الكرزي",
+        "tmz": "Box Passion Cerise d'Khayt",
+        "fr": "Kit Passion Cerise - Broderie",
+        "en": "Cherry Passion Embroidery Kit"
+      },
+      "price": 150,
+      "description": {
+        "ar": "صندوق يعلمك طرز الورود بخيط ملون وقرص خشبي مرن.",
+        "tmz": "Box i-tzegawt n rkham. Ikat ar-rcham d daira n akchoud.",
+        "fr": "Apprenez l'art de la broderie florale. Comprend un tambour en bois et des fils de coton rouge cerise.",
+        "en": "Learn floral embroidery with ease. Includes a wooden embroidery frame and cherry cotton threads."
+      },
+      "whatsInside": [
+        {
+          "ar": "قرص مرن مغربي من خشب الزان",
+          "tmz": "Circle n'akchoud",
+          "fr": "Tambour à broder en bois de hêtre (15cm)",
+          "en": "Beechwood embroidery hoop (15cm)"
+        },
+        {
+          "ar": "5 بكرات خيوط قطنية ملونة",
+          "tmz": "5 tloust n khayt coloré",
+          "fr": "5 écheveaux de fils de coton mouliné",
+          "en": "5 colorful cotton thread skeins"
+        },
+        {
+          "ar": "ثوب كتان مرسوم عليه الطرز",
+          "tmz": "Thoub n l'kettan l'mersoum",
+          "fr": "Toile de lin avec motif pré-tracé",
+          "en": "Natural linen canvas with pre-transferred motif"
+        },
+        {
+          "ar": "إبر تطريز فولاذية",
+          "tmz": "Insk n krouchi",
+          "fr": "Assortiment d'aiguilles de précision",
+          "en": "Professional metal needles kit"
+        }
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&q=80&w=600",
+      "colorHex": "#8B0000"
+    },
+    {
+      "id": "kit-3",
+      "title": {
+        "ar": "صندوق الأطلس الأمازيغي",
+        "tmz": "Box n'Atlas l'Ahmar",
+        "fr": "Kit Atlas Royal - Tissage Traditionnel",
+        "en": "Royal Atlas Traditional Weaving Kit"
+      },
+      "price": 180,
+      "description": {
+        "ar": "صندوق فخم من تقاليد الأطلس فيه خيط صوف أحمر أصيل لتعلم المنسج العائلي.",
+        "tmz": "Box n'Ahmar l'Atlas. Ssof awragh d tkharay n tizgawt.",
+        "fr": "Plongez dans l'héritage berbère. Confectionnez un mini-tissage mural inspiré des motifs géométriques de l'Atlas.",
+        "en": "Discover Berber heritage. Create a small wall weaving matching traditional geometric Atlas designs."
+      },
+      "whatsInside": [
+        {
+          "ar": "منسج خشبي صغير نقال",
+          "tmz": "L'mesraj n akchoud sghir",
+          "fr": "Cadre de tissage en bois portatif",
+          "en": "Portable wooden loom frame"
+        },
+        {
+          "ar": "صوف الغنم الطبيعي المصبوغ يدوياً",
+          "tmz": "Ssof n tixri dyed l'yed",
+          "fr": "Laine de brebis pure filée main",
+          "en": "Hand-spun pure virgin sheep wool"
+        },
+        {
+          "ar": "المشط الخشبي التقليدي للضغط",
+          "tmz": "Agelzim n ssof",
+          "fr": "Peigne à tisser traditionnel en bois",
+          "en": "Traditional wooden weaving comb"
+        },
+        {
+          "ar": "دليل صوتي مسجل في شريحة",
+          "tmz": "Imesra' d saout",
+          "fr": "Livre de motifs géométriques et guide",
+          "en": "Geometric pattern templates guide"
+        }
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1598257006458-087169a1f08d?auto=format&fit=crop&q=80&w=600",
+      "colorHex": "#FF4500"
+    }
+  ],
+  "tutorials": [
+    {
+      "id": "course-1",
+      "metier": "crochet",
+      "linkedKitId": "kit-1",
+      "title": {
+        "ar": "الكروشي: عقدة البداية الأولى",
+        "tmz": "Krouchi: Oqqan Tamzwarout",
+        "fr": "Crochet - La première boucle : Le nœud coulant",
+        "en": "Crochet - First Stitch: The slip knot"
+      },
+      "description": {
+        "ar": "أساس كل عمل في الكروشي. عقدة ساهلة دور الخيط على صبعك وجر.",
+        "tmz": "Aslas n krouchi. Aqan isehlan ssof f ouda nnek.",
+        "fr": "La base de tout travail. Créez votre première boucle coulissante sur le crochet.",
+        "en": "The foundation of all crochet. Twist the thread around your finger and pull securely."
+      },
+      "difficulty": "facile",
+      "duration": "3 min",
+      "videoMockName": "slip-knot",
+      "videoEmbedId": "n8A-H8U_8e0",
+      "exercise": {
+        "title": {
+          "ar": "تمرين: صنع نبيذة صغيرة دائرية للزينة",
+          "tmz": "Exercise: Napperon n'akchoud stasraft",
+          "fr": "Exercice : Confectionner un Napperon Dentelle d'Argan",
+          "en": "Exercise: Knit an Argan Lace Coaster"
+        },
+        "desc": {
+          "ar": "استعملي صوف كوكو الأبيض لتطبيق العقد المتتالية وصنعي أول صحن كأس دائري للبيع.",
+          "tmz": "Isk ssof Coco bac ad talsad napperon imzeled.",
+          "fr": "Utilisez la laine blanche du Kit Coco pour crocheter 5 anneaux reliés. Cet exercice fabrique un Napperon Dentelle vendu sur le souk !",
+          "en": "Use Coco starter white yarn to knit 5 joined loops. This process forms an Argan Lace coaster ready for sale!"
+        },
+        "earnPrice": 180,
+        "outputProductId": "prod-2"
+      },
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": {
+            "ar": "دور خيط الصوف على صبع السبابة مرتين حتى تولي علامة الكروس.",
+            "tmz": "Gar ssof f oudad ssin tikal s tewlafin X.",
+            "fr": "Enroulez le fil de laine deux fois autour de votre index pour former un 'X'.",
+            "en": "Wrap the wool string twice around your index finger forming an 'X' shape."
+          },
+          "animationKey": "wrap-finger"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": {
+            "ar": "دخل الإبرة تحت الخيط اللول، وجر الخيط الثاني لوراه ببطء.",
+            "tmz": "Inra needle s d'ssof amzwarou, tafejd ssof wiss sin.",
+            "fr": "Glissez le crochet sous le premier fil, et attrapez le deuxième fil pour l'amener en arrière.",
+            "en": "Slide the hook under the first loop, latch the second wire and pull it backward gently."
+          },
+          "animationKey": "pull-loop"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": {
+            "ar": "حيد صبعك وزير العقدة حتى تولي لزجة ومريحة على الإبرة.",
+            "tmz": "Kkes oudad nnek, tqenad oqqan d needle.",
+            "fr": "Retirez doucement votre doigt et tirez sur les fils pour ajuster le nœud sans trop serrer.",
+            "en": "Remove your finger carefully and pull either thread ends to adjust the loop diameter snugly."
+          },
+          "animationKey": "snug-knot"
+        }
+      ]
+    },
+    {
+      "id": "course-2",
+      "metier": "crochet",
+      "linkedKitId": "kit-1",
+      "title": {
+        "ar": "الكروشي: خدمة السنسلة الطائرة",
+        "tmz": "Krouchi: Maille Ssensla",
+        "fr": "Crochet - La maille en l'air (La chaînette)",
+        "en": "Crochet - The Chain Stitch (Chaînette)"
+      },
+      "description": {
+        "ar": "كتصنع الطول المناسب لخدمتك. فحال السنسلة ساهلة وتكرر.",
+        "tmz": "Asg l'hem n tixri nnek. Tamen am ssensla isehlan.",
+        "fr": "Créez une jolie ligne de départ en faisant glisser la laine à travers la boucle existante.",
+        "en": "Produce your initial baseline row by passing the hook thread continuously."
+      },
+      "difficulty": "facile",
+      "duration": "5 min",
+      "videoMockName": "chain-stitch",
+      "videoEmbedId": "n8A-H8U_8e0",
+      "exercise": {
+        "title": {
+          "ar": "تمرين: حياكة شال صوف الشاون دافئ",
+          "tmz": "Exercise: Echarpe n'Chefchaouen ssof",
+          "fr": "Exercice : Écharpe Bleu Chefchaouen de Maâlma",
+          "en": "Exercise: Knit a Chefchaouen Blue Scarf"
+        },
+        "desc": {
+          "ar": "كرري غرزة السلسلة لتصنعي صفوف متناسقة وتطلعي شال الصوف الأزرق.",
+          "tmz": "Talsad ssensla ssof azra n Chefchaouen.",
+          "fr": "Répétez la maille chaînette sur 50 cm pour fabriquer une Écharpe d'Atlas. Idéal pour être listé au souk !",
+          "en": "Repeat the chain stitch for 50 cm to create a blue Chefchaouen winter scarf to list in the souk!"
+        },
+        "earnPrice": 250,
+        "outputProductId": "prod-1"
+      },
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": {
+            "ar": "شد الكروشي بحال القلم، والخيط مرخي فاليد اليسرى.",
+            "tmz": "Amezd crochet am rqlam, ssof irkhad f uffus dyalk.",
+            "fr": "Tenez votre crochet comme un stylo de la main droite, et tendez légèrement le fil de la main gauche.",
+            "en": "Hold your crochet needle like a pencil, with the yarn loosely draped over your left hand."
+          },
+          "animationKey": "hold-needle"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": {
+            "ar": "لوي الخيط على راس الإبرة دور واحد من اللور للقدام.",
+            "tmz": "Zzer ssof ifigh f needle gar tewlaft.",
+            "fr": "Enroulez la laine autour du crochet d'arrière en avant (faites un jeté).",
+            "en": "Wrap the yarn or thread around the upper head of the hook from back to front."
+          },
+          "animationKey": "yarn-over"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": {
+            "ar": "دخل راس الإبرة وسط العقدة اللي كانت عندك وجرها لبرة.",
+            "tmz": "Tasefd needle n'ssof f oqqan isghem out.",
+            "fr": "Faites pivoter la tête du crochet vers le bas et tirez le fil à travers la boucle de votre nœud.",
+            "en": "Rotate the hook point slightly downward to drag the yarn clean through your active loop."
+          },
+          "animationKey": "pull-through"
+        }
+      ]
+    },
+    {
+      "id": "course-3",
+      "metier": "crochet",
+      "linkedKitId": "kit-1",
+      "title": {
+        "ar": "الكروشي: وردة د الأركان السحرية",
+        "tmz": "Krouchi: Tarjich n n'Argan",
+        "fr": "Crochet - Le Motif de Fleur d'Arganier",
+        "en": "Crochet - The Argan Flower Stitch"
+      },
+      "description": {
+        "ar": "زواقة كروشي تقليدية ممتازة كتشبه للوردة. زيري باش تطلع مفكسية.",
+        "tmz": "Motif Argan tasebhaht krouchi. Lemmed asg.",
+        "fr": "Créez une splendide rosace en relief inspirée de l'arbre d'Arganier du Souss.",
+        "en": "Learn a floral motif design inspired by Souss valley's sacred Argan flower."
+      },
+      "difficulty": "moyen",
+      "duration": "8 min",
+      "videoMockName": "argan-stitch",
+      "videoEmbedId": "CgH6q309wJw",
+      "exercise": {
+        "title": {
+          "ar": "تمرين: تصميم حقيبة رافية صيفية ذهبية",
+          "tmz": "Exercise: Sac Cabas n'Soleil",
+          "fr": "Exercice : Sac Cabas Mandala du Soleil",
+          "en": "Exercise: Weave a Sunny Boho Tote Bag"
+        },
+        "desc": {
+          "ar": "اجمعي تلاتة ديال زواقات الوردة لخدمة حقيبة شاطئ عصرية وتكسبي ثمن مزيان.",
+          "tmz": "Asefed krad n argan motifs n'sac cabas.",
+          "fr": "Assemblez trois fleurs d'arganier en relief pour fabriquer le Sac Cabas Boho Soleil qui vaut 320 DH au marché !",
+          "en": "Assemble three embossed Argan flower motifs to craft the Sunny Boho Bag valued at 320 DH!"
+        },
+        "earnPrice": 320,
+        "outputProductId": "prod-3"
+      },
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": {
+            "ar": "صاوبي الدائرة السحرية: دوري الصوف جوج مرات على صبع الكبير.",
+            "tmz": "Asg circle n'soof ssin tikal f oudad nnek.",
+            "fr": "Créez un anneau magique : enroulez le fil de laine deux fois autour de votre pouce.",
+            "en": "Form a magic loop structure: wrap the wool yarn twice around your thumb."
+          },
+          "animationKey": "wrap-finger"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": {
+            "ar": "طرزي تلاتة ديال السلاسل الطائرة لداخل الدائرة باش تزيدي لعلو.",
+            "tmz": "Tarzgout ssensla f circle n'soof ad t'ali.",
+            "fr": "Faites trois mailles en l'air à l'intérieur de l'anneau pour donner de la hauteur.",
+            "en": "Chain stitch three times inside the active magic loop to build height."
+          },
+          "animationKey": "pull-loop"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": {
+            "ar": "خدمي طناشر عمود لوسط الدائرة وزيري الخيط باش يخرج الوردة مجموع.",
+            "tmz": "Sghem 12 kolom f circle, tqenad oqqan n rchm.",
+            "fr": "Faites 12 brides simples dans l'anneau, puis tirez sur le fil pour resserrer les pétales de fleur.",
+            "en": "Double crochet 12 loops inside and pull the tail to pack the petals firmly."
+          },
+          "animationKey": "snug-knot"
+        }
+      ]
+    },
+    {
+      "id": "course-4",
+      "metier": "broderie",
+      "linkedKitId": "kit-2",
+      "title": {
+        "ar": "الطرز: غرزة الوردة الفاسية بالحرير",
+        "tmz": "Broderie: Tarzgout n'Fas",
+        "fr": "Broderie - Le Point de Nœud de Fès",
+        "en": "Embroidery - Fez Silk French Knot"
+      },
+      "description": {
+        "ar": "غرزة فاسية تقليدية بالحرير كتصنع نقط بارزة ومطرزة غاية فالجمال.",
+        "tmz": "Tarzgout n silk lmou'allamat lmoghrib.",
+        "fr": "Le secret des détails granuleux et floraux sur les nappes marocaines brodées.",
+        "en": "The secret trick behind beaded floral details on premium Moroccan table clothing."
+      },
+      "difficulty": "moyen",
+      "duration": "6 min",
+      "videoMockName": "french-knot",
+      "videoEmbedId": "YFv_D2C5x8Q",
+      "exercise": {
+        "title": {
+          "ar": "تمرين: تطريز غلاف وسادة فاسي ملكي",
+          "tmz": "Exercise: L'mkhda n silk n'Fas",
+          "fr": "Exercice : Housse de Coussin en Soie Brodée",
+          "en": "Exercise: List a Royal Silk Brodée Pillow"
+        },
+        "desc": {
+          "ar": "استعملي ثوب الكتان من صندوق الكرز وقومي بتطريز وردة فاسية مذهبة.",
+          "tmz": "Sghem l'mkhda s ssof cerise n'Fas.",
+          "fr": "Utilisez le fil de soie et le tambour du Kit Broderie pour aligner 20 points de nœud. Vous obtiendrez une Housse Fès vendable au souk !",
+          "en": "Practice Fez stitches on the linen template from your Cherry Kit. Create a Royal Brodée Pillow valued at 290 DH!"
+        },
+        "earnPrice": 295,
+        "outputProductId": "prod-pillow"
+      },
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": {
+            "ar": "طلعي الإبرة د الفولاذ من التحت للقدام د الثوب د الساتان.",
+            "tmz": "Ali needle gh d kettle n thoub f l'godam.",
+            "fr": "Tirez l'aiguille de l'arrière vers l'avant à travers votre toile de lin tendue.",
+            "en": "Bring your steel needle through the linen fabric from back to front."
+          },
+          "animationKey": "wrap-finger"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": {
+            "ar": "لوي الخيط الحريري تلاتة د المرات على راس الإبرة دورة مرخوفة.",
+            "tmz": "Zzer l'khayt silk ssin negh krad tikal f needle.",
+            "fr": "Enroulez le fil de soie trois fois autour de la pointe de l'aiguille.",
+            "en": "Wrap the silk thread loosely three times around the active needle point."
+          },
+          "animationKey": "pull-loop"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": {
+            "ar": "غرزي الإبرة حدا البلاصة للي خرجتيها وزيري حتا تولي غرزة منفوخة.",
+            "tmz": "Tasefd needle n'ssof f thoub ad tqenad.",
+            "fr": "Repiquez l'aiguille tout près du point de départ et tirez pour fixer la perle bro d'art.",
+            "en": "Re-insert the needle very close to the starting point and pull snug to form a raised knot."
+          },
+          "animationKey": "snug-knot"
+        }
+      ]
+    },
+    {
+      "id": "course-5",
+      "metier": "tissage",
+      "linkedKitId": "kit-3",
+      "title": {
+        "ar": "التيسيج: نسج منسج الأطلس العريق",
+        "tmz": "Tissage: Mensaj n'Atlas",
+        "fr": "Tissage - Le Métier à Tisser de l'Atlas",
+        "en": "Weaving - Royal Atlas Looming"
+      },
+      "description": {
+        "ar": "طريقة جمع خيوط الزربية بالطول والألوان الدافية باش تعلي لوحة منسوجة.",
+        "tmz": "Tixri lmounassama n ssof n n'Atlas.",
+        "fr": "Montez votre premier mini métier à tisser en bois et croisez la laine rouge.",
+        "en": "Mount your first miniature wall rug weaving project using warm Atlas crimson wool."
+      },
+      "difficulty": "expert",
+      "duration": "10 min",
+      "videoMockName": "carpet-weaving",
+      "videoEmbedId": "5F_O8t_v7sY",
+      "exercise": {
+        "title": {
+          "ar": "تمرين: حياكة بساط جداري أمازيغي زاهي",
+          "tmz": "Exercise: Mini-tapis Atlas n'akchoud",
+          "fr": "Exercice : Mini Tapis de l'Atlas aux Couleurs Chaudes",
+          "en": "Exercise: Weave a Miniature Red Atlas Tapestry"
+        },
+        "desc": {
+          "ar": "نسجي الصوف الطبيعي الملون وضغطي بالمنسج الخشبي لإنشاء زربية صغيرة للجدار.",
+          "tmz": "Lemmed tixri mini-rug n'Atlas ssof hmar.",
+          "fr": "Croisez la laine rouge et or sur le mini-métier et tassez au peigne pour façonner un chef-d'œuvre mural d'Atlas d'une valeur de 450 DH !",
+          "en": "Combine rich red & yellow virgin wool onto your table loom frame. Form a stunning geometric Berber room coaster valued at 450 DH!"
+        },
+        "earnPrice": 450,
+        "outputProductId": "prod-rug"
+      },
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": {
+            "ar": "دوزي خيوط الصوف بالطول ما بين سواري المنسج د اللوح.",
+            "tmz": "Inra ssof f lmensaj n akchoud s l'haqq tasekla.",
+            "fr": "Tendez les fils de chaîne verticaux parallèlement sur le cadre en bois de hêtre.",
+            "en": "String raw vertical warp threads parallelly across your wooden frame."
+          },
+          "animationKey": "wrap-finger"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": {
+            "ar": "دخلي الخيط الذهبي بالعرض مرة لفوق ومرة للتحت د خيوط المنسج.",
+            "tmz": "Tasefd l'khayt n ssof awragh g lmounassama.",
+            "fr": "Passez la navette de laine rouge horizontalement une fois dessous, une fois dessus.",
+            "en": "Weave the gold weft string horizontally over and under alternate warp strands."
+          },
+          "animationKey": "pull-loop"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": {
+            "ar": "بركي مزيان ب المشط د اللوح للي فالصندوق باش تزير الخدمة وتجي متينة.",
+            "tmz": "Tqenad s ougelzim n akchoud bac ad iser.",
+            "fr": "Tassez fermement la rangée de laine verte avec le peigne traditionnel en bois.",
+            "en": "Pack down the row tightly using the traditional heavy-weight wooden comb."
+          },
+          "animationKey": "snug-knot"
+        }
+      ]
+    },
+    {
+      "id": "course-6",
+      "metier": "poterie",
+      "linkedKitId": "kit-potery",
+      "title": {
+        "ar": "الفخار: نقش وعجن الطين السلاوي",
+        "tmz": "Poterie: Talekht n'Safi",
+        "fr": "Poterie - Le Modelage en Argile de Safi",
+        "en": "Pottery - Clay Sculpting on Potter's Wheel"
+      },
+      "description": {
+        "ar": "فن عجن الطين الرمادي وتشكيل أواني الطاجين الفاسي الرائعة بيدك على اللولب.",
+        "tmz": "Tlemmed talekht, tajin n'argile isehlan.",
+        "fr": "Apprenez à mouler de l'argile naturelle sur un tour rotatif pour cuire votre premier tajine.",
+        "en": "Sculpt damp Moroccan red clay onto a rotating wheel to form a rustic kitchen tajine."
+      },
+      "difficulty": "expert",
+      "duration": "12 min",
+      "videoMockName": "clay-molding",
+      "videoEmbedId": "E-0gD2Zq8rQ",
+      "exercise": {
+        "title": {
+          "ar": "تمرين: صنع طاجين طيني أصيل ب غطاء مخروطي",
+          "tmz": "Exercise: Tajine n'argile n'Safi",
+          "fr": "Exercice : Tajine de Safi en Argile Polie",
+          "en": "Exercise: Sculpt a Safi Clay Cooking Tajine"
+        },
+        "desc": {
+          "ar": "اعجني قطعة طين دائرية، استعملي لولب الدوران لتشكيل وتمليس وعاء الطاجين وغطاءه.",
+          "tmz": "Sghem tajine n'argile f tour rotatif.",
+          "fr": "Centrez l'argile du Kit Potterie sur le plateau, élevez la coupe avec vos pouces et formez le couvercle conique. Valeur : 190 DH !",
+          "en": "Center the wet clay on the wheel, push down to expand the hollow bowl, and carve the conic cover. Market value: 190 DH!"
+        },
+        "earnPrice": 190,
+        "outputProductId": "prod-tajin"
+      },
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": {
+            "ar": "حطي كرة الطين الرمادي في وسط اللولب الدائري وبللي يدك بالماء مزيان.",
+            "tmz": "Asefed talekht f tour rotatif d aman f uffus.",
+            "fr": "Placez la boule d'argile humide exactement au centre du tour de potier en rotation et mouillez vos paumes.",
+            "en": "Place the damp clay ball exactly in the center of the rotating potter wheel, wet your hands."
+          },
+          "animationKey": "wrap-finger"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": {
+            "ar": "بركي بصوابعك بجوج لداخل حتى تفرغي الطين من الوسط وتطلعي وعاء غارق.",
+            "tmz": "Tasefd oudad gh talekht ad t'ali l'haqq sghir.",
+            "fr": "Pressez vos deux pouces au milieu pour creuser le cœur de l'argile et étirez les parois vers le haut.",
+            "en": "Press your thumbs in the center of the clay, slowly drawing them upward to raise the thin cylinder wall."
+          },
+          "animationKey": "pull-loop"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": {
+            "ar": "ملسي السطح ب الإسفنجة المبللة حتى يتفيكسا شكل وعاء الطاجين الدائري.",
+            "tmz": "Tqenad talekht s l'esponj bac ad iser smooth.",
+            "fr": "Lissez le contour extérieur avec une éponge humide pour fignoler le rebord circulaire de cuisson.",
+            "en": "Smooth the outer boundaries using a damp sponge while rotating to complete the rim."
+          },
+          "animationKey": "snug-knot"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-1",
+      "title": "Écharpe d'Atlas Ciel de Chefchaouen",
+      "price": 250,
+      "description": "عكر صوف طبيعي منسوج ومطرز يدويا من طرف المعلمة خديجة. لون ناصع مثل زرق الشاون.",
+      "imageUrl": "https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&q=80&w=600",
+      "sellerName": "Maâlma Fatima (Chefchaouen)",
+      "isCertified": true,
+      "likes": 35
+    },
+    {
+      "id": "prod-2",
+      "title": "Napperon Dentelle d'Argan Royal",
+      "price": 180,
+      "description": "صغار الكروش المطرز بالحرير الطبيعي. شكل دائري ممتاز للزينة والدوائر المغربية.",
+      "imageUrl": "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&q=80&w=600",
+      "sellerName": "Maâlma Zahra (Tafraout)",
+      "isCertified": true,
+      "likes": 24
+    },
+    {
+      "id": "prod-3",
+      "title": "Sac Cabas Boho Soleil",
+      "price": 320,
+      "description": "حقيبة يد صيفية منسوجة بالكروش خيط رافي طبيعي ذهبي. مريحة وقصح للخرجة.",
+      "imageUrl": "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=600",
+      "sellerName": "Yasmine (Aït Melloul)",
+      "isCertified": false,
+      "likes": 18
+    }
+  ],
+  "orders": [],
+  "adminStock": {
+    "kit-1": 18,
+    "kit-2": 9,
+    "kit-3": 4,
+    "kit-4": 14
+  }
+}
