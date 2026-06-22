@@ -204,6 +204,44 @@ Route::post('/orders', function (Request $request) {
     ], 201);
 });
 
+Route::put('/admin/orders/{id}/status', function (Request $request, $id) {
+    $status = $request->input('status');
+    if (!$status) {
+        return response()->json(['error' => 'Status is required.'], 400);
+    }
+    $order = Order::find($id);
+    if (!$order) {
+        return response()->json(['error' => 'Order not found.'], 404);
+    }
+    $order->status = $status;
+    $order->save();
+    
+    return response()->json([
+        'orderId' => $order->id,
+        'status' => $order->status,
+    ]);
+});
+
+Route::get('/admin/orders', function () {
+    $orders = Order::with('items')->orderBy('created_at', 'desc')->get();
+    return response()->json($orders->map(function ($order) {
+        return [
+            'id' => $order->id,
+            'phone' => $order->phone,
+            'customer_notes' => $order->customer_notes,
+            'user_language' => $order->user_language,
+            'status' => $order->status,
+            'created_at' => $order->created_at,
+            'items' => $order->items->map(function ($item) {
+                return [
+                    'kit_id' => $item->kit_id,
+                    'quantity' => $item->quantity,
+                ];
+            }),
+        ];
+    }));
+});
+
 Route::get('/admin/summary', function () {
     $kits = Kit::all();
     $orders = Order::with('items')->get();
@@ -296,6 +334,24 @@ Route::put('/admin/kits/{id}/stock', function (Request $request, $id) {
     ]);
 });
 
+Route::put('/admin/kits/{id}/price', function (Request $request, $id) {
+    $price = $request->input('price');
+    if ($price === null || !is_numeric($price) || $price < 0) {
+        return response()->json(['error' => 'Price must be a positive number.'], 400);
+    }
+    $kit = Kit::find($id);
+    if (!$kit) {
+        return response()->json(['error' => 'Kit not found.'], 404);
+    }
+    $kit->price = (float)$price;
+    $kit->save();
+    
+    return response()->json([
+        'kitId' => $kit->id,
+        'price' => (float)$kit->price,
+    ]);
+});
+
 Route::post('/sync', function (Request $request) {
     $products = $request->input('products', []);
     $orders = $request->input('orders', []);
@@ -355,3 +411,32 @@ Route::post('/sync', function (Request $request) {
         'syncedOrders' => $syncedOrders,
     ]);
 });
+
+use App\Models\Notification;
+
+Route::get('/notifications', function (Request $request) {
+    $userId = $request->query('user_id');
+    $query = Notification::orderBy('created_at', 'desc');
+    if ($userId) {
+        $query->where(function($q) use ($userId) {
+            $q->where('user_id', $userId)
+              ->orWhereNull('user_id');
+        });
+    } else {
+        $query->whereNull('user_id');
+    }
+    
+    return response()->json($query->get());
+});
+
+Route::put('/notifications/{id}/read', function ($id) {
+    $notif = Notification::find($id);
+    if ($notif) {
+        $notif->is_read = true;
+        $notif->save();
+        return response()->json($notif);
+    }
+    return response()->json(['error' => 'Notification not found.'], 404);
+});
+
+Route::post('/auth/google', [\App\Http\Controllers\AuthController::class, 'google']);

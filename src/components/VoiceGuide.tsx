@@ -68,7 +68,13 @@ export const VoiceGuide: React.FC<VoiceGuideProps> = ({
 
   const handleMicTrigger = () => {
     if (!recognizer) {
-      setErrorText("La reconnaissance vocale n'est pas supportée.");
+      const supportError = {
+        [AppLanguage.DARIJA]: "تسجيل الصوت ماخدامش فهاد المتصفح.",
+        [AppLanguage.TAMAZIGHT]: "Reconnaissance vocale ur t'khdem gh browser ad.",
+        [AppLanguage.FRENCH]: "La reconnaissance vocale n'est pas supportée dans ce navigateur.",
+        [AppLanguage.ENGLISH]: "Speech recognition is not supported in this browser."
+      }[currentLanguage];
+      setErrorText(supportError);
       return;
     }
 
@@ -122,9 +128,12 @@ export const VoiceGuide: React.FC<VoiceGuideProps> = ({
         } catch (err) {
           console.error("Failed executing voice directive", err);
           // Fallback response
-          const defaultResponse = currentLanguage === AppLanguage.DARIJA 
-            ? "سمحلي بزاف معرفتش شنو قلتي، عاودي جربي مرة خرى." 
-            : "Pardon, je n'ai pas pu capturer votre commande. Veuillez ré-essayer.";
+          const defaultResponse = {
+            [AppLanguage.DARIJA]: "سمحلي بزاف معرفتش شنو قلتي، عاودي جربي مرة خرى.",
+            [AppLanguage.TAMAZIGHT]: "Suregh! Ur ssingh mad tennit, a'awed jreb tikelt yadni.",
+            [AppLanguage.FRENCH]: "Pardon, je n'ai pas pu capturer votre commande. Veuillez ré-essayer.",
+            [AppLanguage.ENGLISH]: "Sorry, I couldn't understand that. Please try again."
+          }[currentLanguage];
           setAssistantReply(defaultResponse);
           await speakText(defaultResponse, currentLanguage);
         }
@@ -135,7 +144,13 @@ export const VoiceGuide: React.FC<VoiceGuideProps> = ({
       (err) => {
         console.error("Recognizer error", err);
         setIsListening(false);
-        setErrorText("Problème de capture. S'il vous plaît parlez distinctement.");
+        const errorMsg = {
+          [AppLanguage.DARIJA]: "مشكل فالفهم. عافاك هضري بطريقة واضحة.",
+          [AppLanguage.TAMAZIGHT]: "Lmochkil n tsout. Sawal s l'haqq ifawn.",
+          [AppLanguage.FRENCH]: "Problème de capture. S'il vous plaît parlez distinctement.",
+          [AppLanguage.ENGLISH]: "Speech capture issue. Please speak clearly."
+        }[currentLanguage];
+        setErrorText(errorMsg);
       }
     );
   };
@@ -259,10 +274,22 @@ export const VoiceGuide: React.FC<VoiceGuideProps> = ({
           <div className="bg-stone-50 px-4 py-3 border-t border-slate-100 flex gap-2 justify-center flex-wrap">
             <button
               onClick={async () => {
-                setSpeechTranscript("Apprendre le tissage");
-                setAssistantReply("Je vous redirige vers l'espace d'apprentissage des cours de tissage !");
+                const transcripts = {
+                  [AppLanguage.DARIJA]: "بغيت نتعلم",
+                  [AppLanguage.TAMAZIGHT]: "Righ ad lemmed",
+                  [AppLanguage.FRENCH]: "Je veux apprendre",
+                  [AppLanguage.ENGLISH]: "I want to learn"
+                };
+                const replies = {
+                  [AppLanguage.DARIJA]: "وخا، ها هما دروس كروشي للمبتدئين.",
+                  [AppLanguage.TAMAZIGHT]: "Aha! Khad dorous n'tizgawt.",
+                  [AppLanguage.FRENCH]: "Je vous redirige vers l'espace d'apprentissage.",
+                  [AppLanguage.ENGLISH]: "I am redirecting you to the learning center."
+                };
+                setSpeechTranscript(transcripts[currentLanguage]);
+                setAssistantReply(replies[currentLanguage]);
                 onNavigateTab('learn');
-                await speakText("Je vous redirige vers l'espace d'apprentissage !", currentLanguage);
+                await speakText(replies[currentLanguage], currentLanguage);
               }}
               className="text-[9px] bg-white border border-gray-205 px-2 py-1 rounded-full text-slate-650 hover:bg-amber-50 hover:border-amber-300 font-sans cursor-pointer transition-colors"
             >
@@ -270,10 +297,22 @@ export const VoiceGuide: React.FC<VoiceGuideProps> = ({
             </button>
             <button
               onClick={async () => {
-                setSpeechTranscript("Aller à la boutique");
-                setAssistantReply("Voici tous nos coffrets d'artisanat équipés d'outils.");
+                const transcripts = {
+                  [AppLanguage.DARIJA]: "نشري الصندوق",
+                  [AppLanguage.TAMAZIGHT]: "Asg n soof",
+                  [AppLanguage.FRENCH]: "Aller à la boutique",
+                  [AppLanguage.ENGLISH]: "Go to the kits shop"
+                };
+                const replies = {
+                  [AppLanguage.DARIJA]: "وخا، فتحت ليك متجر الصناديق.",
+                  [AppLanguage.TAMAZIGHT]: "Wakha, khad asg n soof.",
+                  [AppLanguage.FRENCH]: "Voici tous nos coffrets d'artisanat équipés d'outils.",
+                  [AppLanguage.ENGLISH]: "Here are our craft kits and tool boxes."
+                };
+                setSpeechTranscript(transcripts[currentLanguage]);
+                setAssistantReply(replies[currentLanguage]);
                 onNavigateTab('kits');
-                await speakText("Voici nos kits mûrement préparés.", currentLanguage);
+                await speakText(replies[currentLanguage], currentLanguage);
               }}
               className="text-[9px] bg-white border border-gray-205 px-2 py-1 rounded-full text-slate-650 hover:bg-amber-50 hover:border-amber-300 font-sans cursor-pointer transition-colors"
             >
@@ -311,12 +350,13 @@ export const VoiceGuide: React.FC<VoiceGuideProps> = ({
           onClick={() => {
             setIsOpen(!isOpen);
             if (!isOpen) {
-              speakText(
-                currentLanguage === AppLanguage.DARIJA
-                  ? "مرحبا بيك فالمساعد الصوتي لحرفة! بركي على الميكروفون الملون و قولي شنو بغيتي."
-                  : "Bienvenue sur l'assistance vocale Hirfa. Appuyez sur le micro pour me parler.",
-                currentLanguage
-              );
+              const greetings = {
+                [AppLanguage.DARIJA]: "مرحبا بيك فالمساعد الصوتي لحرفة! بركي على الميكروفون الملون و قولي شنو بغيتي.",
+                [AppLanguage.TAMAZIGHT]: "Azul! Marh ba bik f lmou'awen n ssaout. Ouy'ed aflla n mic bac ad sawalad.",
+                [AppLanguage.FRENCH]: "Bienvenue sur l'assistance vocale Hirfa. Appuyez sur le micro pour me parler.",
+                [AppLanguage.ENGLISH]: "Welcome to the Hirfa voice assistant. Press the microphone to speak with me."
+              };
+              speakText(greetings[currentLanguage], currentLanguage);
             }
           }}
           className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center cursor-pointer shadow-[0_8px_30px_rgba(217,119,6,0.3)] transition-all duration-300 focus:outline-none z-55 ${

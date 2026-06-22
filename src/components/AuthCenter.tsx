@@ -99,9 +99,12 @@ export const AuthCenter: React.FC<AuthCenterProps> = ({
   const speakProfileInfo = (roleId: 'foyer' | 'jeune' | 'etudiant' | 'rural') => {
     const r = roles.find(item => item.id === roleId);
     if (r) {
-      const textToSpeak = currentLanguage === AppLanguage.DARIJA 
-        ? `${r.title.ar}. ${r.desc.ar}`
-        : `${r.title.fr}. ${r.desc.fr}`;
+      const textToSpeak = {
+        [AppLanguage.DARIJA]: `${r.title.ar}. ${r.desc.ar}`,
+        [AppLanguage.FRENCH]: `${r.title.fr}. ${r.desc.fr}`,
+        [AppLanguage.ENGLISH]: `${r.title.en}. ${r.desc.en}`,
+        [AppLanguage.TAMAZIGHT]: `${r.title.fr}. ${r.desc.fr}` // Fallback to French phonetic text for Tamazight TTS
+      }[currentLanguage];
       speakText(textToSpeak, currentLanguage);
     }
   };
@@ -114,9 +117,12 @@ export const AuthCenter: React.FC<AuthCenterProps> = ({
         fbUser.location = location;
         fbUser.level = role === 'foyer' ? 'Apprenti(e) Maâlem/Maâlma' : 'Artisan(e) Passionné(e)';
         onLogin(fbUser);
-        const welcomeMsg = currentLanguage === AppLanguage.DARIJA
-          ? `تم تسجيل الدخول بجوجل بنجاح! مرحبا بيك يا ${fbUser.displayName}.`
-          : `Authentification réussie avec Google ! Bienvenue ${fbUser.displayName}.`;
+        const welcomeMsg = {
+          [AppLanguage.DARIJA]: `تم تسجيل الدخول بجوجل بنجاح! مرحبا بيك يا ${fbUser.displayName}.`,
+          [AppLanguage.TAMAZIGHT]: `Azul ${fbUser.displayName}! Tsijled s Google.`,
+          [AppLanguage.FRENCH]: `Authentification réussie avec Google ! Bienvenue ${fbUser.displayName}.`,
+          [AppLanguage.ENGLISH]: `Successfully signed in with Google! Welcome ${fbUser.displayName}.`
+        }[currentLanguage];
         speakText(welcomeMsg, currentLanguage);
       }
     } catch (err: any) {
@@ -144,9 +150,12 @@ export const AuthCenter: React.FC<AuthCenterProps> = ({
 
     onLogin(simulatedUser);
 
-    const welcomeMsg = currentLanguage === AppLanguage.DARIJA
-      ? `تم التسجيل بنجاح! مرحبا بيك يا ${finalName} فساحة العمل ديالك.`
-      : `Connexion réussie ! Bienvenue ${finalName} dans votre espace d'apprentissage et de vente.`;
+    const welcomeMsg = {
+      [AppLanguage.DARIJA]: `تم التسجيل بنجاح! مرحبا بيك يا ${finalName} فساحة العمل ديالك.`,
+      [AppLanguage.TAMAZIGHT]: `Azul ${finalName}! Tsijled gh workspace nnek.`,
+      [AppLanguage.FRENCH]: `Connexion réussie ! Bienvenue ${finalName} dans votre espace d'apprentissage et de vente.`,
+      [AppLanguage.ENGLISH]: `Sign in successful! Welcome ${finalName} to your workspace.`
+    }[currentLanguage];
     speakText(welcomeMsg, currentLanguage);
   };
 
@@ -165,7 +174,13 @@ export const AuthCenter: React.FC<AuthCenterProps> = ({
         streak: 12
       };
       onLogin(user);
-      speakText("Marhaban bik Khadija! Vous êtes connectée.", currentLanguage);
+      const welcomeMsg = {
+        [AppLanguage.DARIJA]: "مرحبا بيك خديجة! راكي متصلة دابا.",
+        [AppLanguage.TAMAZIGHT]: "Azul fellam Khadija! Tsijled account nnem.",
+        [AppLanguage.FRENCH]: "Marhaban bik Khadija ! Vous êtes connectée.",
+        [AppLanguage.ENGLISH]: "Welcome Khadija! You are logged in."
+      }[currentLanguage];
+      speakText(welcomeMsg, currentLanguage);
     } else {
       const user: PIEUser = {
         uid: 'user-lma-2',
@@ -180,7 +195,13 @@ export const AuthCenter: React.FC<AuthCenterProps> = ({
         streak: 5
       };
       onLogin(user);
-      speakText("Marhaban bik Yassir! Vous êtes connecté.", currentLanguage);
+      const welcomeMsg = {
+        [AppLanguage.DARIJA]: "مرحبا بيك ياسر! راك متصل دابا.",
+        [AppLanguage.TAMAZIGHT]: "Azul fellak Yassir! Tsijled account nnek.",
+        [AppLanguage.FRENCH]: "Marhaban bik Yassir ! Vous êtes connecté.",
+        [AppLanguage.ENGLISH]: "Welcome Yassir! You are logged in."
+      }[currentLanguage];
+      speakText(welcomeMsg, currentLanguage);
     }
   };
 
@@ -213,12 +234,13 @@ export const AuthCenter: React.FC<AuthCenterProps> = ({
             <button
               onClick={() => {
                 onLogout();
-                speakText(
-                  currentLanguage === AppLanguage.DARIJA 
-                    ? "تم الخروج بنجاح. مع السلامة يا معلّم(ة) !" 
-                    : "Déconnexion réussie ! À bientôt sur la plateforme Hirfa.", 
-                  currentLanguage
-                );
+                const msg = {
+                  [AppLanguage.DARIJA]: "تم الخروج بنجاح. مع السلامة يا معلّم(ة) !",
+                  [AppLanguage.TAMAZIGHT]: "Ar tufat! Logout nnek i-cacher.",
+                  [AppLanguage.FRENCH]: "Déconnexion réussie ! À bientôt sur la plateforme Hirfa.",
+                  [AppLanguage.ENGLISH]: "Successfully logged out! See you soon on Hirfa."
+                }[currentLanguage];
+                speakText(msg, currentLanguage);
               }}
               className="px-4 py-2 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 rounded-xl flex items-center gap-2 text-xs font-black uppercase tracking-wider transition-colors cursor-pointer"
             >

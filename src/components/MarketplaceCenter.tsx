@@ -25,6 +25,7 @@ export const MarketplaceCenter: React.FC<MarketplaceCenterProps> = ({
   products,
   onProductsUpdated
 }) => {
+  const workshopImage = '/assets/moroccan-workshop.jpeg';
   const [isListOpen, setIsListOpen] = useState<boolean>(false);
   const [newTitle, setNewTitle] = useState<string>('');
   const [newPrice, setNewPrice] = useState<string>('');
@@ -52,32 +53,57 @@ export const MarketplaceCenter: React.FC<MarketplaceCenterProps> = ({
       return prod;
     });
     onProductsUpdated(updated);
-    speakText(currentLanguage === AppLanguage.DARIJA ? "مزيان، عجبك هاد الكروشي !" : "Magnifique création !", currentLanguage);
+    const msg = {
+      [AppLanguage.DARIJA]: "مزيان، عجبك هاد الكروشي !",
+      [AppLanguage.TAMAZIGHT]: "Tanemmirt fellak! I'inra krouchi ad.",
+      [AppLanguage.FRENCH]: "Magnifique création !",
+      [AppLanguage.ENGLISH]: "Gorgeous creation!"
+    }[currentLanguage];
+    speakText(msg, currentLanguage);
   };
 
   const handleProductSpeak = (prod: Product) => {
-    let text = `${prod.title}. ${prod.description}. ${currentLanguage === AppLanguage.DARIJA ? "ثمن ديالها" : "Prix :"} ${prod.price} Dirhams.`;
+    const pricePrefix = {
+      [AppLanguage.DARIJA]: "الثمن ديالها",
+      [AppLanguage.TAMAZIGHT]: "Watig nnes",
+      [AppLanguage.FRENCH]: "Prix :",
+      [AppLanguage.ENGLISH]: "Price:"
+    }[currentLanguage];
+    const currencySuffix = {
+      [AppLanguage.DARIJA]: "درهم",
+      [AppLanguage.TAMAZIGHT]: "DH",
+      [AppLanguage.FRENCH]: "Dirhams",
+      [AppLanguage.ENGLISH]: "Dirhams"
+    }[currentLanguage];
+    let text = `${prod.title}. ${prod.description}. ${pricePrefix} ${prod.price} ${currencySuffix}.`;
     speakText(text, currentLanguage);
   };
 
   // Simulate Camera Snap using lovely crochet high quality templates
   const triggerCamera = () => {
-    setCameraActive(true);
-    speakText(currentLanguage === AppLanguage.DARIJA ? "حليت الكاميرا. تصوري العمل ديالك دابا." : "Appuyez sur le bouton rond pour photographier votre travail.", currentLanguage);
+    const msg = {
+      [AppLanguage.DARIJA]: "حليت الكاميرا. تصوري العمل ديالك دابا.",
+      [AppLanguage.TAMAZIGHT]: "Righ ad tsowred tikhray nnek. Ouy'ed f round button.",
+      [AppLanguage.FRENCH]: "Appuyez sur le bouton rond pour photographier votre travail.",
+      [AppLanguage.ENGLISH]: "Press the round button to take a photo of your work."
+    }[currentLanguage];
+    speakText(msg, currentLanguage);
   };
 
   const snapPhoto = () => {
     // Select a lovely preset handcrafted catalog photo
-    const presets = [
-      "https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=600"
-    ];
+    const presets = [workshopImage, workshopImage, workshopImage];
     const picked = presets[Math.floor(Math.random() * presets.length)];
     setCapturedPhotoUrl(picked);
     setCameraActive(false);
     
-    speakText(currentLanguage === AppLanguage.DARIJA ? "مزيان، صورنا العمل ديالك !" : "Photo capturée avec succès !", currentLanguage);
+    const msg = {
+      [AppLanguage.DARIJA]: "مزيان، صورنا العمل ديالك !",
+      [AppLanguage.TAMAZIGHT]: "Tanemmirt, tsowred tikhray nnek s najah!",
+      [AppLanguage.FRENCH]: "Photo capturée avec succès !",
+      [AppLanguage.ENGLISH]: "Photo captured successfully!"
+    }[currentLanguage];
+    speakText(msg, currentLanguage);
   };
 
   // Simulate Speak recording
@@ -85,11 +111,23 @@ export const MarketplaceCenter: React.FC<MarketplaceCenterProps> = ({
     if (isRecording) {
       setIsRecording(false);
       setVoiceRecorded(true);
-      speakText(currentLanguage === AppLanguage.DARIJA ? "مزيان، سجلنا الوصف الصوتي ديالك !" : "Description vocale enregistrée !", currentLanguage);
+      const msg = {
+        [AppLanguage.DARIJA]: "مزيان، سجلنا الوصف الصوتي ديالك !",
+        [AppLanguage.TAMAZIGHT]: "Tanemmirt, sawal nnek i-cacher!",
+        [AppLanguage.FRENCH]: "Description vocale enregistrée !",
+        [AppLanguage.ENGLISH]: "Voice description recorded!"
+      }[currentLanguage];
+      speakText(msg, currentLanguage);
     } else {
       setIsRecording(true);
       setVoiceRecorded(false);
-      speakText(currentLanguage === AppLanguage.DARIJA ? "قولي دابا شنو صنعتي وشحال بغيتي تبيعيها." : "Parlez maintenant... Décrivez votre travail et son prix.", currentLanguage);
+      const msg = {
+        [AppLanguage.DARIJA]: "قولي دابا شنو صنعتي وشحال بغيتي تبيعيها.",
+        [AppLanguage.TAMAZIGHT]: "Sawal ghassa... Ini mad t-sgherd d watig nnes.",
+        [AppLanguage.FRENCH]: "Parlez maintenant... Décrivez votre travail et son prix.",
+        [AppLanguage.ENGLISH]: "Speak now... Describe your craft and its price."
+      }[currentLanguage];
+      speakText(msg, currentLanguage);
     }
   };
 
@@ -99,7 +137,7 @@ export const MarketplaceCenter: React.FC<MarketplaceCenterProps> = ({
     const finalTitle = newTitle.trim() || (currentLanguage === AppLanguage.DARIJA ? "إبداع الحرفية ديالتنا" : "Création d'Artisane");
     const finalPrice = parseFloat(newPrice) || 150;
     const finalDesc = newDesc.trim() || (currentLanguage === AppLanguage.DARIJA ? "وصف صوتي مسجّل في المتجر" : "Création fait-main avec description vocale enregistrée.");
-    const finalImage = capturedPhotoUrl || "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=600";
+    const finalImage = capturedPhotoUrl || workshopImage;
 
     const localProductPayload = {
       id: `prod-user-${Date.now()}`,
@@ -123,7 +161,13 @@ export const MarketplaceCenter: React.FC<MarketplaceCenterProps> = ({
       try {
         const saved = await addUserProduct(localProductPayload);
         onProductsUpdated([saved, ...products]);
-        speakText(currentLanguage === AppLanguage.DARIJA ? "مزيان بزااف! كمل الخيط ونزلنا الكروشي ديالك فالمارشي المفتوح." : "Félicitations, votre création est en ligne !", currentLanguage);
+        const msg = {
+          [AppLanguage.DARIJA]: "مزيان بزااف! كمل الخيط ونزلنا الكروشي ديالك فالمارشي المفتوح.",
+          [AppLanguage.TAMAZIGHT]: "Tanemmirt fellak! Tikhray nnek gant online gh souk.",
+          [AppLanguage.FRENCH]: "Félicitations, votre création est en ligne !",
+          [AppLanguage.ENGLISH]: "Congratulations, your creation is now online!"
+        }[currentLanguage];
+        speakText(msg, currentLanguage);
       } catch (err) {
         console.error("Online publishing failed, fallback to sync queue", err);
         onQueueOfflineAction('add_to_marketplace', localProductPayload);

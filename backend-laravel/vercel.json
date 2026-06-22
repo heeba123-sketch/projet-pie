@@ -1,0 +1,26 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "public/index.php",
+            "use": "vercel-php@0.6.1"
+        },
+        {
+            "src": "public/build/**",
+            "use": "@vercel/static"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/public/index.php"
+        }
+    ],
+    "env": {
+        "APP_ENV": "production",
+        "APP_DEBUG": "false",
+        "CACHE_DRIVER": "array",
+        "SESSION_DRIVER": "cookie",
+        "QUEUE_CONNECTION": "sync"
+    }
+}

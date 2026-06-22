@@ -41,7 +41,7 @@
           "en": "Tactile stitch guides with visual relief"
         }
       ],
-      "imageUrl": "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=600",
+      "imageUrl": "/assets/kit_coco_crochet.jpg",
       "colorHex": "#F5F5DC"
     },
     {
@@ -85,7 +85,7 @@
           "en": "Professional metal needles kit"
         }
       ],
-      "imageUrl": "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&q=80&w=600",
+      "imageUrl": "/assets/kit_passion_cerise.png",
       "colorHex": "#8B0000"
     },
     {
@@ -129,7 +129,7 @@
           "en": "Geometric pattern templates guide"
         }
       ],
-      "imageUrl": "https://images.unsplash.com/photo-1598257006458-087169a1f08d?auto=format&fit=crop&q=80&w=600",
+      "imageUrl": "/assets/kit_atlas_royal.png",
       "colorHex": "#FF4500"
     }
   ],
@@ -555,7 +555,7 @@
       "title": "Écharpe d'Atlas Ciel de Chefchaouen",
       "price": 250,
       "description": "عكر صوف طبيعي منسوج ومطرز يدويا من طرف المعلمة خديجة. لون ناصع مثل زرق الشاون.",
-      "imageUrl": "https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&q=80&w=600",
+      "imageUrl": "/assets/moroccan-workshop.jpeg",
       "sellerName": "Maâlma Fatima (Chefchaouen)",
       "isCertified": true,
       "likes": 35
@@ -565,7 +565,7 @@
       "title": "Napperon Dentelle d'Argan Royal",
       "price": 180,
       "description": "صغار الكروش المطرز بالحرير الطبيعي. شكل دائري ممتاز للزينة والدوائر المغربية.",
-      "imageUrl": "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&q=80&w=600",
+      "imageUrl": "/assets/moroccan-workshop.jpeg",
       "sellerName": "Maâlma Zahra (Tafraout)",
       "isCertified": true,
       "likes": 24
@@ -575,17 +575,51 @@
       "title": "Sac Cabas Boho Soleil",
       "price": 320,
       "description": "حقيبة يد صيفية منسوجة بالكروش خيط رافي طبيعي ذهبي. مريحة وقصح للخرجة.",
-      "imageUrl": "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=600",
+      "imageUrl": "/assets/moroccan-workshop.jpeg",
       "sellerName": "Yasmine (Aït Melloul)",
       "isCertified": false,
       "likes": 18
     }
   ],
-  "orders": [],
+  "orders": [
+    {
+      "id": "order-1780946845487",
+      "items": [
+        {
+          "kitId": "Sac en paille tissé",
+          "quantity": 1
+        },
+        {
+          "kitId": "kit-1",
+          "quantity": 1
+        }
+      ],
+      "phone": "0777898313",
+      "customerNotes": "Commande par hinba",
+      "date": "2026-06-08T19:27:25.487Z",
+      "userLanguage": "ar"
+    }
+  ],
   "adminStock": {
     "kit-1": 18,
     "kit-2": 9,
     "kit-3": 4,
     "kit-4": 14
-  }
+  },
+  "users": [
+    {
+      "uid": "uid-1780780070464-dc9d7z",
+      "displayName": "hiba",
+      "email": "hibazobid134@gmail.com",
+      "password": "biker@&_",
+      "role": "etudiant",
+      "location": "Chefchaouen (Nord)",
+      "earnings": 0,
+      "coursesCompleted": 0,
+      "level": "Nouveau Membre",
+      "xp": 0,
+      "streak": 1,
+      "createdAt": "2026-06-06T21:07:50.464Z"
+    }
+  ]
 }

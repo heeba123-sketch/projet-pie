@@ -38,7 +38,6 @@ import {
   getPersistedMockUser,
   PIEUser,
   fetchKits,
-  fetchProducts,
   fetchTutorials,
   fetchAdminSummary,
   addUserProduct,
@@ -129,7 +128,8 @@ const voiceMessages = [
   }
 ];
 
-const mockArtisanes = [
+// Default fallback data for artisanes, clients, expeditions
+const DEFAULT_ARTISANES = [
   { id: 'art-1', name: 'Mihvaram', region: 'Taroudant', specialty: 'Tissage', level: 'Maâlma Expert', coursesCount: 6, kitsSold: 23, rating: 6.9, active: true, earnings: 4500 },
   { id: 'art-2', name: 'Malias Auhr', region: 'Chefchaouen', specialty: 'Broderie', level: 'Maâlma Expert', coursesCount: 20, kitsSold: 38, rating: 6.5, active: true, earnings: 9200 },
   { id: 'art-3', name: 'Malika Ait', region: 'Sefrou', specialty: 'Crochet', level: 'Enseignante', coursesCount: 4, kitsSold: 15, rating: 4.8, active: true, earnings: 2800 },
@@ -137,14 +137,14 @@ const mockArtisanes = [
   { id: 'art-5', name: 'Zineb Benslimane', region: 'Marrakech', specialty: 'Broderie', level: 'Débutante', coursesCount: 0, kitsSold: 4, rating: 4.2, active: false, earnings: 480 }
 ];
 
-const mockClients = [
+const DEFAULT_CLIENTS = [
   { id: 'cli-1', name: 'Jean-Pierre L.', phone: '+33 6 12 34 56 78', region: 'Paris, France', ordersCount: 4, totalSpent: 1850, active: true },
   { id: 'cli-2', name: 'Souad Amrani', phone: '+212 6 61 22 33 44', region: 'Casablanca, Maroc', ordersCount: 2, totalSpent: 620, active: true },
   { id: 'cli-3', name: 'Elena Rostova', phone: '+49 170 9876543', region: 'Berlin, Allemagne', ordersCount: 5, totalSpent: 2950, active: true },
   { id: 'cli-4', name: 'Ahmed Oudghiri', phone: '+212 6 70 88 99 00', region: 'Rabat, Maroc', ordersCount: 1, totalSpent: 120, active: false }
 ];
 
-const mockExpeditions = [
+const DEFAULT_EXPEDITIONS = [
   { id: 'exp-1', client: 'Jean-Pierre L.', destination: 'Paris, France', kit: 'Kit Atlas Royal', price: 180, date: '02.06.2026', status: 'Expédié' },
   { id: 'exp-2', client: 'Souad Amrani', destination: 'Casablanca, Maroc', kit: 'Kit Débutant Coco', price: 120, date: '02.06.2026', status: 'En préparation' },
   { id: 'exp-3', client: 'Elena Rostova', destination: 'Berlin, Allemagne', kit: 'Kit Passion Cerise', price: 150, date: '01.06.2026', status: 'Livré' }
@@ -155,15 +155,28 @@ export const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('dashboard');
   const [activeSubSection, setActiveSubSection] = useState<string>('');
 
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [passwordInput, setPasswordInput] = useState<string>('');
+  const [loginError, setLoginError] = useState<string>('');
+
   // Core API State
   const [summary, setSummary] = useState<AdminSummary | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [kits, setKits] = useState<Kit[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [artisanes, setArtisanes] = useState<any[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
+  const [expeditions, setExpeditions] = useState<any[]>([]);
+
+  // Price editing state
+  const [editingPriceKitId, setEditingPriceKitId] = useState<string | null>(null);
+  const [editingPriceValue, setEditingPriceValue] = useState<string>('');
 
   // Page level states
   const [statusText, setStatusText] = useState<string>('Prêt');
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [toasts, setToasts] = useState<{ id: number; message: string; type: 'success' | 'info' | 'error' }[]>([]);
 
   // Search & filters
@@ -181,14 +194,15 @@ export const AdminDashboard: React.FC = () => {
   const [restockQty, setRestockQty] = useState<number>(10);
 
   // Detail highlight Modals
-  const [selectedMaalma, setSelectedMaalma] = useState<typeof mockArtisanes[0] | null>(null);
+  const [selectedMaalma, setSelectedMaalma] = useState<any | null>(null);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   const [showMessages, setShowMessages] = useState<boolean>(false);
 
-  // Interactive Live Chat Simulator
-  const [chatMessages, setChatMessages] = useState<{ sender: 'maalma' | 'admin'; text: string; time: string }[]>([
-    { sender: 'maalma', text: "Salam, j'ai fini de broder le coussin Fès. Pouvez-vous vérifier ma photo sur le Marketplace ?", time: "12:30" }
-  ]);
+  // Interactive Live Chat
+  const [chatMessages, setChatMessages] = useState<{ sender: 'maalma' | 'admin'; text: string; time: string }[]>(() => {
+    const saved = localStorage.getItem('projet_pie_chat_messages');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [newChatText, setNewChatText] = useState<string>('');
 
   // Course Creator State
@@ -207,32 +221,141 @@ export const AdminDashboard: React.FC = () => {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [summaryRes, productsRes, tutorialsRes, kitsRes] = await Promise.all([
+      const API_BASE = ((import.meta as any).env?.VITE_API_URL) || '/api';
+      const [summaryRes, productsRes, tutorialsRes, kitsRes, ordersRes, artisanesRes, clientsRes, expeditionsRes] = await Promise.all([
         fetchAdminSummary(),
-        fetchProducts(),
+        fetch(`${API_BASE}/admin/products`).then(r => r.ok ? r.json() : []),
         fetchTutorials(),
-        fetchKits()
+        fetchKits(),
+        fetch(`${API_BASE}/admin/orders`).then(r => r.ok ? r.json() : []),
+        fetch(`${API_BASE}/admin/artisanes`).then(r => r.ok ? r.json() : []),
+        fetch(`${API_BASE}/admin/clients`).then(r => r.ok ? r.json() : []),
+        fetch(`${API_BASE}/admin/expeditions`).then(r => r.ok ? r.json() : [])
       ]);
 
-      if (summaryRes) setSummary(summaryRes);
-      if (productsRes) setProducts(productsRes);
-      if (tutorialsRes) setCourses(tutorialsRes);
-      if (kitsRes) setKits(kitsRes);
+      if (summaryRes != null) setSummary(summaryRes as AdminSummary);
+      if (productsRes != null) setProducts(productsRes as Product[]);
+      if (tutorialsRes != null) setCourses(tutorialsRes as Course[]);
+      if (kitsRes != null) setKits(kitsRes as Kit[]);
+      if (Array.isArray(ordersRes)) setOrders(ordersRes);
+      if (Array.isArray(artisanesRes)) setArtisanes(artisanesRes);
+      if (Array.isArray(clientsRes)) setClients(clientsRes);
+      if (Array.isArray(expeditionsRes)) setExpeditions(expeditionsRes);
 
       setStatusText('Données synchronisées avec succès');
-      showToast('Toutes les données du serveur sont à jour.', 'success');
     } catch (err) {
       console.error('Failed to sync admin data', err);
       setStatusText('Erreur de connexion serveur');
-      showToast('Impossible de synchroniser avec le serveur.', 'error');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const updateKitPrice = async (kitId: string, newPrice: number) => {
+    const API_BASE = ((import.meta as any).env?.VITE_API_URL) || '/api';
+    try {
+      const res = await fetch(`${API_BASE}/admin/kits/${kitId}/price`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ price: newPrice })
+      });
+      if (!res.ok) throw new Error('Failed');
+      setKits(prev => prev.map(k => k.id === kitId ? { ...k, price: newPrice } : k));
+      showToast(`Prix mis à jour : ${newPrice} DH`, 'success');
+      setEditingPriceKitId(null);
+    } catch {
+      showToast('Erreur lors de la mise à jour du prix.', 'error');
+    }
+  };
+
+  const updateOrderStatus = async (orderId: string, status: string) => {
+    const API_BASE = ((import.meta as any).env?.VITE_API_URL) || '/api';
+    try {
+      const res = await fetch(`${API_BASE}/admin/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (!res.ok) throw new Error('Failed');
+      setOrders(prev => prev.map((o: any) => o.id === orderId ? { ...o, status } : o));
+      const emoji = status === 'confirmed' ? '✅' : '❌';
+      showToast(`${emoji} Commande ${orderId} : ${status === 'confirmed' ? 'Validée' : 'Annulée'}`, status === 'confirmed' ? 'success' : 'error');
+      const notifs = JSON.parse(localStorage.getItem('projet_pie_client_notifications') || '[]');
+      notifs.push({ orderId, status, timestamp: new Date().toISOString() });
+      localStorage.setItem('projet_pie_client_notifications', JSON.stringify(notifs));
+    } catch {
+      showToast('Erreur lors de la mise à jour.', 'error');
+    }
+  };
+
   useEffect(() => {
-    loadData();
-  }, []);
+    if (isAuthenticated) {
+      loadData();
+      // Auto-refresh every 5 seconds for real-time dynamic updates
+      const pollInterval = setInterval(() => {
+        loadData();
+      }, 5000);
+      return () => clearInterval(pollInterval);
+    }
+  }, [isAuthenticated]);
+
+  // Load artisanes, clients, and expeditions dynamically
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const loadDynamicData = async () => {
+      try {
+        const API_BASE = ((import.meta as any).env?.VITE_API_URL) || '/api';
+        const [artisanesRes, clientsRes, expeditionsRes] = await Promise.all([
+          fetch(`${API_BASE}/admin/artisanes`).then(r => r.ok ? r.json() : []),
+          fetch(`${API_BASE}/admin/clients`).then(r => r.ok ? r.json() : []),
+          fetch(`${API_BASE}/admin/expeditions`).then(r => r.ok ? r.json() : [])
+        ]);
+      } catch (err) {
+        console.error('Failed to load dynamic admin data', err);
+      }
+    };
+    loadDynamicData();
+    const pollInterval = setInterval(loadDynamicData, 5000);
+    return () => clearInterval(pollInterval);
+  }, [isAuthenticated]);
+
+  // Real-time listener for Cross-tab notifications (Orders & Messages)
+  useEffect(() => {
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'projet_pie_admin_notifications') {
+        const notifs = JSON.parse(e.newValue || '[]');
+        if (notifs.length > 0) {
+          const latest = notifs[notifs.length - 1];
+          // Show real-time luxurious toast
+          showToast(`🚨 NOUVEAU: ${latest.message}`, 'info');
+          // Automatically refresh the dashboard data to reflect the new order
+          loadData();
+        }
+      }
+      if (e.key === 'projet_pie_chat_messages') {
+        const messages = JSON.parse(e.newValue || '[]');
+        if (messages.length > chatMessages.length) {
+          setChatMessages(messages);
+          const latest = messages[messages.length - 1];
+          if (latest.sender === 'maalma') {
+            showToast("Nouveau message d'une Artisane !", 'info');
+          }
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, [chatMessages.length, isAuthenticated]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === 'admin123') {
+      setIsAuthenticated(true);
+      setLoginError('');
+    } else {
+      setLoginError('Mot de passe incorrect. Indice: admin123');
+    }
+  };
 
   const approveProduct = async (id: string) => {
     try {
@@ -249,8 +372,7 @@ export const AdminDashboard: React.FC = () => {
 
   const rejectProduct = async (id: string) => {
     try {
-      const response = await firebaseRejectProduct(id);
-      if (!response) throw new Error('Failed to delete');
+      await firebaseRejectProduct(id);
       setProducts((prev) => prev.filter((item) => item.id !== id));
       setSummary((curr) => curr ? { ...curr, pendingCreations: Math.max(0, curr.pendingCreations - 1) } : curr);
       showToast('Création rejetée et retirée de la modération.', 'info');
@@ -343,19 +465,12 @@ export const AdminDashboard: React.FC = () => {
     if (!newChatText.trim()) return;
 
     const userMsg = { sender: 'admin' as const, text: newChatText, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
-    setChatMessages((prev) => [...prev, userMsg]);
+    const updated = [...chatMessages, userMsg];
+    setChatMessages(updated);
+    localStorage.setItem('projet_pie_chat_messages', JSON.stringify(updated));
+    window.dispatchEvent(new Event('storage'));
+    
     setNewChatText('');
-
-    // Trigger simulated Maâlma response after 1.5s
-    setTimeout(() => {
-      const responseMsg = {
-        sender: 'maalma' as const,
-        text: "Barakallahoufikoum ! C'est noté, je continue la confection du prochain lot.",
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setChatMessages((prev) => [...prev, responseMsg]);
-      showToast("Nouveau message d'une Artisane !", 'info');
-    }, 1500);
   };
 
   // Filter lists based on Search
@@ -367,11 +482,12 @@ export const AdminDashboard: React.FC = () => {
   }, [products, searchQuery]);
 
   const filteredArtisanes = useMemo(() => {
-    return mockArtisanes.filter((art) => {
+    const dataToFilter = artisanes.length > 0 ? artisanes : DEFAULT_ARTISANES;
+    return dataToFilter.filter((art) => {
       const query = searchQuery.toLowerCase();
       return art.name.toLowerCase().includes(query) || art.region.toLowerCase().includes(query) || art.specialty.toLowerCase().includes(query);
     });
-  }, [searchQuery]);
+  }, [searchQuery, artisanes]);
 
   const pendingCreationsList = useMemo(() => products.filter((p) => !p.isCertified), [products]);
 
@@ -421,6 +537,41 @@ export const AdminDashboard: React.FC = () => {
       setHoveredChartPoint(null);
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#F8F0E7] flex flex-col items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full border border-[#EADFCE]">
+          <div className="text-center mb-6">
+            <ShieldCheck size={48} className="text-[#B85230] mx-auto mb-2" />
+            <h1 className="text-2xl font-black text-[#17110C]">Espace Admin</h1>
+            <p className="text-xs text-[#6B5845] mt-1">Authentification requise</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <input
+                type="password"
+                placeholder="Mot de passe"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#B85230] font-bold"
+              />
+              {loginError && <p className="text-xs text-rose-500 mt-2 font-bold">{loginError}</p>}
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-[#B85230] hover:bg-[#8C3A1E] text-white rounded-xl font-black text-sm transition-all shadow-md"
+            >
+              Se Connecter
+            </button>
+          </form>
+          <button onClick={() => window.location.href = '/'} className="w-full mt-4 py-2 text-[#9B8570] hover:text-[#3D2B1A] text-xs font-bold">
+            Retour au site
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-dashboard font-sans antialiased">
@@ -955,7 +1106,7 @@ export const AdminDashboard: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {mockArtisanes.slice(0, 4).map((row) => (
+                        {(artisanes.length > 0 ? artisanes : DEFAULT_ARTISANES).slice(0, 4).map((row) => (
                           <tr
                             key={row.id}
                             onClick={() => setSelectedMaalma(row)}
@@ -1020,7 +1171,7 @@ export const AdminDashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {mockClients.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase())).map((c) => (
+                      {(clients.length > 0 ? clients : DEFAULT_CLIENTS).filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase())).map((c) => (
                         <tr key={c.id} className="border-b border-[#FAF5EE] hover:bg-[#FAF5EE]/30 transition-all">
                           <td className="p-3 text-xs font-bold text-[#17110C] flex items-center gap-2">
                             <div className="w-7 h-7 rounded-full bg-[#E7D2BF] flex items-center justify-center text-xs">👤</div>
@@ -1232,40 +1383,62 @@ export const AdminDashboard: React.FC = () => {
               
               {activeSubSection === 'Expéditions' ? (
                 <div>
-                  <h3 className="text-sm font-black text-[#3D2B1A] uppercase tracking-wide mb-4">Suivi logistique des Expéditions</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-black text-[#3D2B1A] uppercase tracking-wide">Suivi logistique des Expéditions</h3>
+                    <span className="text-xs font-bold text-[#6B5845] bg-[#FAF5EE] px-3 py-1 rounded-full border">{orders.length} commandes réelles</span>
+                  </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-[#FAF5EE] border-b border-[#EADFCE]">
-                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">ID Envoi</th>
-                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Artisane / Client</th>
-                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Destination</th>
-                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Kit</th>
-                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-right">Valeur</th>
+                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">ID</th>
+                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Client / Tel</th>
+                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Notes</th>
                           <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-center">Date</th>
-                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-center">Status</th>
+                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-center">Statut</th>
+                          <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-center">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {mockExpeditions.map((e) => (
-                          <tr key={e.id} className="border-b border-[#FAF5EE] hover:bg-[#FAF5EE]/30 transition-all">
-                            <td className="p-3 text-xs font-black text-[#17110C]">{e.id}</td>
-                            <td className="p-3 text-xs font-bold text-[#3D2B1A]">{e.client}</td>
-                            <td className="p-3 text-xs font-medium text-[#6B5845]">{e.destination}</td>
-                            <td className="p-3 text-xs font-bold text-[#B85230]">{e.kit}</td>
-                            <td className="p-3 text-xs font-black text-[#17110C] text-right">{e.price} DH</td>
-                            <td className="p-3 text-xs font-medium text-[#6B5845] text-center">{e.date}</td>
+                        {orders.length === 0 && (
+                          <tr><td colSpan={6} className="p-8 text-center text-xs text-[#9B8570] font-bold">Aucune commande reçue pour le moment.</td></tr>
+                        )}
+                        {orders.map((o: any) => (
+                          <tr key={o.id} className="border-b border-[#FAF5EE] hover:bg-[#FAF5EE]/30 transition-all">
+                            <td className="p-3 text-xs font-black text-[#17110C] max-w-[80px] truncate">{o.id}</td>
+                            <td className="p-3">
+                              <strong className="block text-xs font-bold text-[#3D2B1A]">{o.phone}</strong>
+                            </td>
+                            <td className="p-3 text-xs text-[#6B5845] max-w-[160px] truncate">{o.customer_notes || o.customerNotes}</td>
+                            <td className="p-3 text-xs font-medium text-[#6B5845] text-center">
+                              {o.created_at ? new Date(o.created_at).toLocaleDateString('fr-FR') : '—'}
+                            </td>
                             <td className="p-3 text-center">
-                              <button
-                                onClick={() => showToast(`Le status de l'expédition ${e.id} a été mis à jour.`, 'success')}
-                                className={`text-[10px] font-bold py-1 px-3.5 rounded-full transition-all border ${
-                                  e.status === 'Livré' ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]' :
-                                  e.status === 'Expédié' ? 'bg-[#EFF6FF] border-[#BFDBFE] text-[#1E40AF]' :
-                                  'bg-[#FEF3C7] border-[#FDE68A] text-[#D97706]'
-                                }`}
-                              >
-                                {e.status}
-                              </button>
+                              <span className={`text-[10px] font-bold py-1 px-3 rounded-full border ${
+                                o.status === 'confirmed' ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]' :
+                                o.status === 'cancelled' ? 'bg-[#FEF2F2] border-[#FCA5A5] text-[#B91C1C]' :
+                                'bg-[#FEF3C7] border-[#FDE68A] text-[#D97706]'
+                              }`}>
+                                {o.status === 'confirmed' ? '✅ Confirmé' : o.status === 'cancelled' ? '❌ Annulé' : '⏳ En attente'}
+                              </span>
+                            </td>
+                            <td className="p-3">
+                              {o.status === 'pending' && (
+                                <div className="flex gap-1.5 justify-center">
+                                  <button
+                                    onClick={() => updateOrderStatus(o.id, 'confirmed')}
+                                    className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-black rounded-lg transition-all shadow-sm"
+                                  >
+                                    ✓ Valider
+                                  </button>
+                                  <button
+                                    onClick={() => updateOrderStatus(o.id, 'cancelled')}
+                                    className="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-black rounded-lg transition-all shadow-sm"
+                                  >
+                                    ✕ Annuler
+                                  </button>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -1273,30 +1446,88 @@ export const AdminDashboard: React.FC = () => {
                     </table>
                   </div>
                 </div>
+              ) : activeSubSection === 'Gestion Stock' ? (
+                <div>
+                  <h3 className="text-sm font-black text-[#3D2B1A] uppercase tracking-wide mb-4">Gestion du Stock par Kit</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {kits.map((kit: any) => {
+                      const stockInfo = summary?.stock.find(s => s.kitId === kit.id);
+                      const currentStock = stockInfo?.stock ?? kit.stock ?? 0;
+                      const isLow = currentStock <= (stockInfo?.reorderAt ?? 8);
+                      return (
+                        <div key={kit.id} className={`border-2 rounded-2xl overflow-hidden flex flex-col shadow-sm bg-white ${isLow ? 'border-amber-300' : 'border-[#EADFCE]'}`}>
+                          <div className="relative">
+                            <img src={kit.imageUrl} alt={kit.title.fr} className="w-full h-36 object-cover" />
+                            <div className={`absolute top-2 right-2 px-2 py-1 rounded-lg text-[10px] font-black ${isLow ? 'bg-amber-400 text-white' : 'bg-emerald-500 text-white'}`}>
+                              {isLow ? '⚠️ Stock bas' : '✓ En stock'}
+                            </div>
+                          </div>
+                          <div className="p-4 flex-1 flex flex-col justify-between">
+                            <strong className="block text-sm font-bold text-[#3D2B1A]">{kit.title.fr}</strong>
+                            <div className="mt-3">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-[10px] font-black text-[#9B8570] uppercase">Il reste en stock</span>
+                                <span className={`text-sm font-black ${isLow ? 'text-amber-600' : 'text-emerald-600'}`}>{currentStock} unités</span>
+                              </div>
+                              <div className="w-full bg-gray-100 rounded-full h-2">
+                                <div
+                                  className={`h-2 rounded-full transition-all ${isLow ? 'bg-amber-400' : 'bg-emerald-500'}`}
+                                  style={{ width: `${Math.min(100, (currentStock / 25) * 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => setSelectedRestockKit({ id: kit.id, title: kit.title.fr, currentStock })}
+                              className="mt-3 w-full py-2 bg-[#FAF5EE] hover:bg-[#F3E5D5] text-[#3D2B1A] text-xs font-black rounded-xl border border-[#EADFCE] transition-all"
+                            >
+                              + Réapprovisionner
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               ) : (
                 <div>
                   <h3 className="text-sm font-black text-[#3D2B1A] uppercase tracking-wide mb-4">Inventaire et Prix des Kits en Boutique</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {kits.map((kit) => (
+                    {kits.map((kit: any) => (
                       <div key={kit.id} className="border rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm bg-white hover:shadow-md transition-all">
                         <img src={kit.imageUrl} alt={kit.title.fr} className="w-full h-40 object-cover" />
                         <div className="p-4">
                           <strong className="block text-sm font-bold text-[#3D2B1A]">{kit.title.fr}</strong>
-                          <p className="text-xs text-[#6B5845] mt-1.5 leading-relaxed font-semibold line-clamp-3">{kit.description.fr}</p>
+                          <p className="text-xs text-[#6B5845] mt-1.5 leading-relaxed font-semibold line-clamp-2">{kit.description.fr}</p>
                           
                           <div className="flex items-center justify-between pt-3 mt-3 border-t border-[#FAF5EE]">
-                            <span className="text-xs font-black text-[#B85230]">{kit.price} DH</span>
-                            <button
-                              onClick={() => {
-                                const newPrice = window.prompt(`Entrez le nouveau prix pour ${kit.title.fr} (actuel : ${kit.price} DH) :`);
-                                if (newPrice && !isNaN(Number(newPrice))) {
-                                  showToast('Prix mis à jour avec succès.', 'success');
-                                }
-                              }}
-                              className="text-xs font-bold text-[#6B4E36] hover:text-[#3D2B1A] flex items-center gap-1.5 py-1 px-2.5 rounded bg-[#FAF5EE]"
-                            >
-                              Modifier prix
-                            </button>
+                            {editingPriceKitId === kit.id ? (
+                              <div className="flex items-center gap-1 flex-1">
+                                <input
+                                  type="number"
+                                  value={editingPriceValue}
+                                  onChange={e => setEditingPriceValue(e.target.value)}
+                                  className="w-20 px-2 py-1 text-xs font-bold border-2 border-[#B85230] rounded-lg outline-none"
+                                  autoFocus
+                                />
+                                <span className="text-xs font-bold text-[#9B8570]">DH</span>
+                                <button onClick={() => updateKitPrice(kit.id, Number(editingPriceValue))} className="p-1 bg-emerald-500 text-white rounded-lg">
+                                  <Check size={12} />
+                                </button>
+                                <button onClick={() => setEditingPriceKitId(null)} className="p-1 bg-gray-200 rounded-lg">
+                                  <X size={12} />
+                                </button>
+                              </div>
+                            ) : (
+                              <span className="text-xs font-black text-[#B85230]">{kit.price} DH</span>
+                            )}
+                            {editingPriceKitId !== kit.id && (
+                              <button
+                                onClick={() => { setEditingPriceKitId(kit.id); setEditingPriceValue(String(kit.price)); }}
+                                className="text-xs font-bold text-[#6B4E36] hover:text-[#3D2B1A] flex items-center gap-1.5 py-1 px-2.5 rounded bg-[#FAF5EE] hover:bg-[#F3E5D5] transition-all"
+                              >
+                                Modifier prix
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1310,22 +1541,19 @@ export const AdminDashboard: React.FC = () => {
           {/* VIEW: 5. MARKETPLACE SOLIDAIRE */}
           {activeSection === 'marketplace' && (
             <div className="animate-fadeIn p-5 bg-white border border-[#EADFCE] rounded-2xl shadow-sm">
-              <h3 className="text-sm font-black text-[#3D2B1A] uppercase tracking-wide mb-4 flex items-center gap-2">
-                <Volume2 size={16} className="text-[#B85230]" /> Modération et Commissions Souk
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="p-4 bg-[#FAF5EE] border border-[#EADFCE] rounded-xl text-center">
-                  <span className="text-[10px] font-black uppercase text-[#9B8570]">Volume de Ventes</span>
-                  <strong className="block text-2xl font-black text-[#17110C] mt-1">45 200 DH</strong>
-                </div>
-                <div className="p-4 bg-[#FAF5EE] border border-[#EADFCE] rounded-xl text-center">
-                  <span className="text-[10px] font-black uppercase text-[#9B8570]">Commissions (5%)</span>
-                  <strong className="block text-2xl font-black text-[#B85230] mt-1">2 260 DH</strong>
-                </div>
-                <div className="p-4 bg-[#FAF5EE] border border-[#EADFCE] rounded-xl text-center">
-                  <span className="text-[10px] font-black uppercase text-[#9B8570]">Créations modérées</span>
-                  <strong className="block text-2xl font-black text-[#6A8F6A] mt-1">{products.length}</strong>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-black text-[#3D2B1A] uppercase tracking-wide flex items-center gap-2">
+                  <Volume2 size={16} className="text-[#B85230]" /> Modération Souk
+                </h3>
+                <div className="flex gap-3">
+                  <div className="p-3 bg-[#FAF5EE] border border-[#EADFCE] rounded-xl text-center">
+                    <span className="text-[9px] font-black uppercase text-[#9B8570]">Créations</span>
+                    <strong className="block text-lg font-black text-[#17110C]">{products.length}</strong>
+                  </div>
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-center">
+                    <span className="text-[9px] font-black uppercase text-amber-600">En attente</span>
+                    <strong className="block text-lg font-black text-amber-700">{pendingCreationsList.length}</strong>
+                  </div>
                 </div>
               </div>
 
@@ -1335,10 +1563,11 @@ export const AdminDashboard: React.FC = () => {
                     <tr className="bg-[#FAF5EE] border-b border-[#EADFCE]">
                       <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Image</th>
                       <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Création</th>
-                      <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Vendeuse (Artisane)</th>
-                      <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-right">Prix demandé</th>
+                      <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase">Vendeuse</th>
+                      <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-right">Prix</th>
                       <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-center">Likes</th>
-                      <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-center">Statut de validation</th>
+                      <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-center">Statut</th>
+                      <th className="p-3 text-[10px] font-black text-[#3D2B1A] uppercase text-center">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1349,9 +1578,7 @@ export const AdminDashboard: React.FC = () => {
                         </td>
                         <td className="p-3">
                           <strong className="block text-xs font-bold text-[#3D2B1A]">{p.title}</strong>
-                          <small className="block text-[10px] text-[#9B8570] font-semibold leading-relaxed mt-0.5 truncate max-w-xs">
-                            {p.description}
-                          </small>
+                          <small className="block text-[10px] text-[#9B8570] font-semibold leading-relaxed mt-0.5 truncate max-w-xs">{p.description}</small>
                         </td>
                         <td className="p-3 text-xs font-bold text-[#3D2B1A]">{p.sellerName}</td>
                         <td className="p-3 text-xs font-black text-[#B85230] text-right">{p.price} DH</td>
@@ -1360,8 +1587,28 @@ export const AdminDashboard: React.FC = () => {
                           <span className={`text-[10px] font-bold py-0.5 px-2 rounded-full border ${
                             p.isCertified ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]' : 'bg-[#FFF2DF] border-[#F4C77B] text-[#D97706]'
                           }`}>
-                            {p.isCertified ? 'Certifié & En Vente' : 'Attente validation'}
+                            {p.isCertified ? '✓ En Vente' : '⏳ En attente'}
                           </span>
+                        </td>
+                        <td className="p-3 text-center">
+                          {!p.isCertified ? (
+                            <div className="flex gap-1 justify-center">
+                              <button
+                                onClick={() => approveProduct(p.id)}
+                                className="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-black rounded-lg transition-all"
+                              >
+                                ✓ Valider
+                              </button>
+                              <button
+                                onClick={() => rejectProduct(p.id)}
+                                className="px-2.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-black rounded-lg transition-all"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-[#6A8F6A] font-bold">Publié</span>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -1374,78 +1621,91 @@ export const AdminDashboard: React.FC = () => {
           {/* VIEW: 6. ENTRAIDE & COMMS */}
           {activeSection === 'comms' && (
             <div className="animate-fadeIn grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
-              {/* Live Chat Panel */}
-              <div className="lg:col-span-2 p-5 bg-white border border-[#EADFCE] rounded-2xl shadow-sm flex flex-col h-[400px] justify-between">
-                <div className="flex items-center justify-between pb-3 border-b border-[#FAF5EE]">
-                  <strong className="text-sm font-black text-[#3D2B1A] uppercase tracking-wide flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#6A8F6A] animate-pulse"></span>
-                    Support Live Simulator
-                  </strong>
+
+              {/* Live Chat Premium – Admin ↔ Maâlma */}
+              <div className="lg:col-span-2 bg-white border border-[#EADFCE] rounded-2xl shadow-sm flex flex-col h-[560px] overflow-hidden">
+                <div className="p-4 border-b border-[#FAF5EE] bg-gradient-to-r from-[#FAF5EE] to-white flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <span className="text-white text-xs">🧕</span>
+                  </div>
+                  <div>
+                    <strong className="text-sm font-black text-[#3D2B1A]">Canal Artisane ↔ Admin</strong>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span className="text-[10px] font-bold text-emerald-600">En ligne – Messages en temps réel</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => { setChatMessages([]); localStorage.removeItem('projet_pie_chat_messages'); }}
+                    className="ml-auto text-[10px] text-[#9B8570] hover:text-rose-500 font-bold px-2 py-1 rounded-lg hover:bg-rose-50 transition-all"
+                  >
+                    Effacer
+                  </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto my-3 flex flex-col gap-2 pr-1">
+                <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-[#FDFAF7]">
+                  {chatMessages.length === 0 && (
+                    <div className="flex-1 flex items-center justify-center">
+                      <p className="text-xs text-[#9B8570] font-bold italic text-center">
+                        Aucun message.<br/>Ouvrez l'Espace Maâlma dans un autre onglet pour communiquer en direct.
+                        <br/><a href="/?maalma=true" target="_blank" className="text-[#B85230] underline mt-2 block">→ Ouvrir l'Espace Maâlma</a>
+                      </p>
+                    </div>
+                  )}
                   {chatMessages.map((msg, i) => (
-                    <div
-                      key={i}
-                      className={`flex flex-col max-w-[80%] p-3 rounded-xl text-xs leading-relaxed ${
+                    <div key={i} className={`flex ${msg.sender === 'admin' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[78%] px-4 py-3 rounded-2xl shadow-sm text-xs leading-relaxed ${
                         msg.sender === 'admin'
-                          ? 'bg-[#B85230] text-white self-end rounded-tr-none'
-                          : 'bg-[#FBF4EC] text-[#3D2B1A] self-start rounded-tl-none border border-[#EADFCE]'
-                      }`}
-                    >
-                      <span className="font-bold mb-0.5">{msg.sender === 'admin' ? 'Coopérative (Admin)' : 'Maâlma'}</span>
-                      <p className="font-semibold">{msg.text}</p>
-                      <span className={`text-[9px] text-right mt-1 font-bold ${msg.sender === 'admin' ? 'text-[#FAF5EE]/70' : 'text-[#9B8570]'}`}>
-                        {msg.time}
-                      </span>
+                          ? 'bg-[#B85230] text-white rounded-tr-sm'
+                          : 'bg-white text-[#3D2B1A] border border-[#EADFCE] rounded-tl-sm'
+                      }`}>
+                        <span className={`block text-[9px] font-black uppercase mb-1 ${msg.sender === 'admin' ? 'text-[#FAF5EE]/70' : 'text-[#B85230]'}`}>
+                          {msg.sender === 'admin' ? '👤 Admin PIE' : '🧕 Maâlma'}
+                        </span>
+                        <p className="font-semibold">{msg.text}</p>
+                        <span className={`block text-right text-[9px] mt-1 font-bold ${msg.sender === 'admin' ? 'text-[#FAF5EE]/50' : 'text-[#9B8570]'}`}>{msg.time}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                <form onSubmit={handleSendChatMessage} className="flex gap-2 border-t border-[#FAF5EE] pt-3">
+                <form onSubmit={handleSendChatMessage} className="p-4 bg-white border-t border-[#FAF5EE] flex gap-2">
                   <input
                     type="text"
-                    placeholder="Écrire votre réponse d'assistance..."
+                    placeholder="Répondre à la Maâlma..."
                     value={newChatText}
                     onChange={(e) => setNewChatText(e.target.value)}
-                    className="flex-1 px-4 py-2 bg-[#FBF4EC] text-xs font-bold rounded-xl border border-transparent focus:border-[#B85230] focus:bg-white outline-none"
+                    className="flex-1 px-4 py-3 bg-[#FBF4EC] text-xs font-bold rounded-xl border border-transparent focus:border-[#B85230] focus:bg-white outline-none transition-all"
                   />
-                  <button
-                    type="submit"
-                    className="p-2.5 bg-[#B85230] hover:bg-[#8C3A1E] text-white rounded-xl transition-all"
-                  >
-                    <Send size={15} />
+                  <button type="submit" className="px-4 py-3 bg-[#B85230] hover:bg-[#8C3A1E] text-white rounded-xl transition-all font-bold text-xs flex items-center gap-1.5">
+                    <Send size={14} /> Envoyer
                   </button>
                 </form>
               </div>
 
-              {/* System Evaluations / Ratings card */}
-              <article className="p-5 bg-white border border-[#EADFCE] rounded-2xl shadow-sm">
-                <h3 className="text-sm font-black text-[#3D2B1A] uppercase tracking-wide mb-3">Évaluations et Avis</h3>
-                
-                <div className="flex flex-col gap-3">
-                  <div className="p-3 bg-[#FBF4EC] rounded-xl">
-                    <div className="flex items-center justify-between">
-                      <strong className="text-xs font-bold text-[#3D2B1A]">Avis Client - Kit Atlas</strong>
-                      <span className="text-xs text-[#B85230] font-black">⭐⭐⭐⭐⭐</span>
-                    </div>
-                    <p className="text-[10px] text-[#6B5845] mt-1 font-semibold leading-relaxed">
-                      "La laine est magnifique et le cadre en hêtre est de très bonne qualité. Le guide vocal Darija est très bien fait."
-                    </p>
+              {/* Quick Stats */}
+              <div className="flex flex-col gap-4">
+                <article className="p-5 bg-gradient-to-br from-[#17110C] to-[#3D2B1A] rounded-2xl shadow-xl text-white">
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-[#C4A882] mb-4">Activité Chat</h3>
+                  <div className="text-3xl font-black mb-1">{chatMessages.length}</div>
+                  <p className="text-xs text-white/60 font-bold">messages échangés</p>
+                  <div className="mt-4 pt-4 border-t border-white/10 text-xs font-bold">
+                    <span className="text-[#6A8F6A]">{chatMessages.filter(m => m.sender === 'maalma').length}</span> de Maâlma &nbsp;•&nbsp;
+                    <span className="text-[#C4A882]">{chatMessages.filter(m => m.sender === 'admin').length}</span> de l'Admin
                   </div>
-
-                  <div className="p-3 bg-[#FBF4EC] rounded-xl">
-                    <div className="flex items-center justify-between">
-                      <strong className="text-xs font-bold text-[#3D2B1A]">Avis Client - Sac Cabas</strong>
-                      <span className="text-xs text-[#B85230] font-black">⭐⭐⭐⭐</span>
-                    </div>
-                    <p className="text-[10px] text-[#6B5845] mt-1 font-semibold leading-relaxed">
-                      "Trés beau sac mandala. Quelques imperfections mineures mais cela montre le fait-main !"
-                    </p>
-                  </div>
-                </div>
-              </article>
+                </article>
+                <article className="p-5 bg-white border border-[#EADFCE] rounded-2xl shadow-sm">
+                  <h3 className="text-xs font-black text-[#3D2B1A] uppercase tracking-wide mb-3">Accès rapide</h3>
+                  <a
+                    href="/?maalma=true"
+                    target="_blank"
+                    className="block w-full py-3 bg-[#FAF5EE] hover:bg-[#F3E5D5] text-[#3D2B1A] text-xs font-black rounded-xl border border-[#EADFCE] transition-all text-center"
+                  >
+                    🧕 Ouvrir Studio Maâlma
+                  </a>
+                  <p className="text-[10px] text-[#9B8570] font-bold text-center mt-2">Mot de passe : <code className="bg-[#FAF5EE] px-1 rounded">maalma</code></p>
+                </article>
+              </div>
             </div>
           )}
 

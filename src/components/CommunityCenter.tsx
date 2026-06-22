@@ -6,6 +6,8 @@
 import React, { useState } from 'react';
 import { AppLanguage, CommunityPost, LocalizedText } from '../types';
 import { speakText } from '../utils/speech';
+
+const workshopImage = '/assets/moroccan-workshop.jpeg';
 import { AudioHover } from './AudioHover';
 import { Play, Flame, Heart, Sparkles, Mic, MapPin, Check, Plus, User, Info, Smartphone, Eye } from 'lucide-react';
 
@@ -19,7 +21,7 @@ const INITIAL_POSTS: CommunityPost[] = [
     authorName: 'Khadija El Horra',
     authorRole: 'foyer',
     authorLocation: 'Demnate 🏔️',
-    imageUrl: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=450&auto=format&fit=crop&q=80',
+    imageUrl: workshopImage,
     category: 'crochet',
     likes: 42,
     cheersCount: 28,
@@ -41,7 +43,7 @@ const INITIAL_POSTS: CommunityPost[] = [
     authorName: 'Malika Ait Ouargh',
     authorRole: 'rural',
     authorLocation: 'Imilchil 🛖',
-    imageUrl: 'https://images.unsplash.com/photo-1528892951291-001cc1009a0c?w=450&auto=format&fit=crop&q=80',
+    imageUrl: workshopImage,
     category: 'tissage',
     likes: 89,
     cheersCount: 57,
@@ -63,7 +65,7 @@ const INITIAL_POSTS: CommunityPost[] = [
     authorName: 'Anass El Fassi',
     authorRole: 'etudiant',
     authorLocation: 'Fès 🏺',
-    imageUrl: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=450&auto=format&fit=crop&q=80',
+    imageUrl: workshopImage,
     category: 'broderie',
     likes: 24,
     cheersCount: 12,
@@ -85,7 +87,7 @@ const INITIAL_POSTS: CommunityPost[] = [
     authorName: 'Aicha Sefrioui',
     authorRole: 'jeune',
     authorLocation: 'Sefrou 🍒',
-    imageUrl: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=450&auto=format&fit=crop&q=80',
+    imageUrl: workshopImage,
     category: 'couture',
     likes: 67,
     cheersCount: 46,
@@ -154,12 +156,13 @@ export const CommunityCenter: React.FC<CommunityCenterProps> = ({ currentLanguag
 
   const startVoiceRecordingSim = () => {
     setIsRecording(true);
-    speakText(
-      currentLanguage === AppLanguage.DARIJA 
-        ? "أنا كانسمعك دابا، هضري و عاودي لينا على المنتوج اللي خدمتي بيدك." 
-        : "Je vous écoute, décrivez votre création textile à haute voix.",
-      currentLanguage
-    );
+    const promptMsg = {
+      [AppLanguage.DARIJA]: "أنا كانسمعك دابا، هضري و عاودي لينا على المنتوج اللي خدمتي بيدك.",
+      [AppLanguage.TAMAZIGHT]: "Sawalad sawr ghassa f lmou'alafat n'krouchi nnek.",
+      [AppLanguage.FRENCH]: "Je vous écoute, décrivez votre création textile à haute voix.",
+      [AppLanguage.ENGLISH]: "I am listening, describe your textile creation out loud."
+    }[currentLanguage];
+    speakText(promptMsg, currentLanguage);
 
     // After 4.5 seconds auto wrap simulation
     setTimeout(() => {
@@ -191,19 +194,26 @@ export const CommunityCenter: React.FC<CommunityCenterProps> = ({ currentLanguag
       const selectedStr = options[Math.floor(Math.random() * options.length)];
       setRecordedVoiceText(selectedStr);
 
-      speakText(
-        currentLanguage === AppLanguage.DARIJA 
-          ? "مزيان! سجلت الهضرة ديالك." 
-          : "Super ! J'ai bien enregistré votre voix.",
-        currentLanguage
-      );
+      const successMsg = {
+        [AppLanguage.DARIJA]: "مزيان! سجلت الهضرة ديالك.",
+        [AppLanguage.TAMAZIGHT]: "Tanemmirt! Sawal nnek i-cacher.",
+        [AppLanguage.FRENCH]: "Super ! J'ai bien enregistré votre voix.",
+        [AppLanguage.ENGLISH]: "Great! I have recorded your description."
+      }[currentLanguage];
+      speakText(successMsg, currentLanguage);
     }, 4500);
   };
 
   const submitCustomPost = (e: React.FormEvent) => {
     e.preventDefault();
     if (!authorName.trim() || !recordedVoiceText) {
-      speakText("S'il vous plaît, dites votre nom complet et enregistrez votre message.", currentLanguage);
+      const errorMsg = {
+        [AppLanguage.DARIJA]: "عافاك كتبي الاسم الكامل ديالك وسجلي الصوت.",
+        [AppLanguage.TAMAZIGHT]: "Ini ism nnek d tsijled sawal nnek a'afak.",
+        [AppLanguage.FRENCH]: "S'il vous plaît, dites votre nom complet et enregistrez votre message.",
+        [AppLanguage.ENGLISH]: "Please write your name and record your voice message."
+      }[currentLanguage];
+      speakText(errorMsg, currentLanguage);
       return;
     }
 
@@ -212,11 +222,7 @@ export const CommunityCenter: React.FC<CommunityCenterProps> = ({ currentLanguag
       authorName: authorName,
       authorRole: selectedRole,
       authorLocation: authorLoc.trim() || (currentLanguage === AppLanguage.DARIJA ? "مغربية فخورة" : "Maroc"),
-      imageUrl: selectedCategory === 'crochet' 
-        ? 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=450&auto=format&fit=crop&q=80'
-        : selectedCategory === 'broderie'
-        ? 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=450&auto=format&fit=crop&q=80'
-        : 'https://images.unsplash.com/photo-1528892951291-001cc1009a0c?w=450&auto=format&fit=crop&q=80',
+      imageUrl: workshopImage,
       category: selectedCategory,
       likes: 1,
       cheersCount: 0,
@@ -240,12 +246,13 @@ export const CommunityCenter: React.FC<CommunityCenterProps> = ({ currentLanguag
     setAuthorLoc('');
     setRecordedVoiceText('');
     
-    speakText(
-      currentLanguage === AppLanguage.DARIJA 
-        ? "فرحنا بيك بالزاف! التشاركية تبارطاجات دابا ف الساحة." 
-        : "Votre publication vocale est partagée sur le mur d'entraide !",
-      currentLanguage
-    );
+    const successPublish = {
+      [AppLanguage.DARIJA]: "فرحنا بيك بالزاف! التشاركية تبارطاجات دابا ف الساحة.",
+      [AppLanguage.TAMAZIGHT]: "Tanemmirt fellam! Tikhray nnek t-share-at ghassa.",
+      [AppLanguage.FRENCH]: "Votre publication vocale est partagée sur le mur d'entraide !",
+      [AppLanguage.ENGLISH]: "Your voice post has been shared on the mutual aid wall!"
+    }[currentLanguage];
+    speakText(successPublish, currentLanguage);
   };
 
   const getRoleLabel = (role: 'foyer' | 'rural' | 'etudiant' | 'jeune') => {
@@ -301,7 +308,13 @@ export const CommunityCenter: React.FC<CommunityCenterProps> = ({ currentLanguag
         <button
           onClick={() => {
             setIsRecordModalOpen(true);
-            speakText("Marhaban! Tsajli post ssaouty dyalk s'tefrah.", currentLanguage);
+            const greetMsg = {
+              [AppLanguage.DARIJA]: "مرحبا بيك! سجلي دابا منشورك الصوتي بكل فرح.",
+              [AppLanguage.TAMAZIGHT]: "Azul! Tsijled sawal nnek s lmou'awen.",
+              [AppLanguage.FRENCH]: "Bienvenue ! Enregistrez votre publication vocale avec joie.",
+              [AppLanguage.ENGLISH]: "Welcome! Record your voice post with joy."
+            }[currentLanguage];
+            speakText(greetMsg, currentLanguage);
           }}
           className="px-6 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 text-slate-950 font-black rounded-2xl flex items-center gap-3.5 mx-auto shadow-lg transition-transform hover:scale-105 group border-2 border-amber-400 cursor-pointer text-sm"
         >

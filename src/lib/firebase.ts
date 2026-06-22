@@ -61,7 +61,7 @@ export const DEFAULT_KITS = [
       fr: "Le coffret parfait pour débuter le crochet. Contient de la laine épaisse Coco blanche et un crochet de 4mm.",
       en: "The perfect box to start crocheting. Includes thick white Coco yarn and a 4mm crochet."
     },
-    imageUrl: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=600",
+    imageUrl: "/assets/kit_coco_crochet.jpg",
     colorHex: "#F5F5DC",
     stock: 18
   },
@@ -80,7 +80,7 @@ export const DEFAULT_KITS = [
       fr: "Apprenez l'art de la broderie florale. Comprend un tambour en bois et des fils de coton rouge cerise.",
       en: "Learn floral embroidery with ease. Includes a wooden embroidery frame and cherry cotton threads."
     },
-    imageUrl: "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&q=80&w=600",
+    imageUrl: "/assets/kit_passion_cerise.png",
     colorHex: "#8B0000",
     stock: 9
   },
@@ -99,7 +99,7 @@ export const DEFAULT_KITS = [
       fr: "Plongez dans l'héritage berbère. Confectionnez un mini-tissage mural inspiré des motifs géométriques de l'Atlas.",
       en: "Discover Berber heritage. Create a small wall weaving matching traditional geometric Atlas designs."
     },
-    imageUrl: "https://images.unsplash.com/photo-1598257006458-087169a1f08d?auto=format&fit=crop&q=80&w=600",
+    imageUrl: "/assets/kit_atlas_royal.png",
     colorHex: "#FF4500",
     stock: 4
   }

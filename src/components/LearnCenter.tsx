@@ -117,7 +117,12 @@ export const LearnCenter: React.FC<LearnCenterProps> = ({ currentLanguage, onAdd
         ? "فن الفخار و الطين د مدينة سلا وآسفي. بركي على مسار التشكيل باش دوري لولب الطين."
         : "Bienvenue dans l'art de la Poterie d'Argile de Safi. Apprenez à tourner et modeler un tajine en terre cuite.";
     } else {
-      metierMsg = "Voici tous nos métiers d'artisanat marocain.";
+      metierMsg = {
+        [AppLanguage.DARIJA]: "ها هما كاع المهن الحرفية المغربية اللي تقدري تتعلمي.",
+        [AppLanguage.TAMAZIGHT]: "Khad krad n'lmou'alafat n'lmoghrib.",
+        [AppLanguage.FRENCH]: "Voici tous nos métiers d'artisanat marocain.",
+        [AppLanguage.ENGLISH]: "Here are all our Moroccan artisan crafts."
+      }[currentLanguage];
     }
     speakText(metierMsg, currentLanguage);
   };

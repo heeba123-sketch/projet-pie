@@ -13,6 +13,7 @@ import { CommunityCenter } from './components/CommunityCenter';
 import { VoiceGuide } from './components/VoiceGuide';
 import { AuthCenter } from './components/AuthCenter';
 import { AdminDashboard } from './components/AdminDashboard';
+import HomeCenter from './components/HomeCenter';
 import { 
   tryInitializeFirebase, 
   getPersistedMockUser,
@@ -104,9 +105,12 @@ export default function App() {
       localStorage.removeItem('projet_pie_offline_queue');
       const latestProducts = await fetchProducts();
       setProducts(latestProducts);
-      const msg = currentLanguage === AppLanguage.DARIJA
-        ? 'راني صيفط كاع الحوايج للحاسوب دابا ودخلات التغيرات بنجاح !'
-        : 'Toutes vos créations et commandes enregistrées hors ligne sont maintenant synchronisées avec succès !';
+      const msg = {
+        [AppLanguage.DARIJA]: 'راني صيفط كاع الحوايج للحاسوب دابا ودخلات التغيرات بنجاح !',
+        [AppLanguage.TAMAZIGHT]: 'Synchronisigh tighawsiwin nnek d\'serveur b najah!',
+        [AppLanguage.FRENCH]: 'Toutes vos créations et commandes enregistrées hors ligne sont maintenant synchronisées avec succès !',
+        [AppLanguage.ENGLISH]: 'All your offline creations and orders have been successfully synchronized!'
+      }[currentLanguage];
       speakText(msg, currentLanguage);
     } catch (err) { 
       console.error('Sync process failed', err); 
@@ -205,21 +209,61 @@ export default function App() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <LanguageSelector currentLanguage={currentLanguage} onChangeLanguage={setCurrentLanguage} />
 
+          {activeTab !== 'home' && (
+            <button
+              onClick={() => {
+                setActiveTab('home');
+                speakPhrase('home_intro', currentLanguage);
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                padding: '8px 14px',
+                borderRadius: '999px',
+                border: '1px solid rgba(184,82,48,0.18)',
+                background: 'rgba(184,82,48,0.08)',
+                color: 'var(--pie-terra)',
+                fontWeight: 700,
+                fontSize: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                minHeight: '40px',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'var(--pie-terra)';
+                e.currentTarget.style.color = '#fff';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(184,82,48,0.08)';
+                e.currentTarget.style.color = 'var(--pie-terra)';
+              }}
+            >
+              <Home size={13} />
+              <span>{currentLanguage === AppLanguage.DARIJA ? 'الرئيسية' : currentLanguage === AppLanguage.ENGLISH ? 'Home' : 'Accueil'}</span>
+            </button>
+          )}
+
           <button
             onClick={() => {
               setActiveTab('profile');
               if (user) {
-                speakText(
-                  currentLanguage === AppLanguage.DARIJA
-                    ? `أهلاً بك يا ${user.displayName}. رصيدك ${user.earnings} درهم.`
-                    : `Bienvenue ${user.displayName}. Votre solde est de ${user.earnings} DH.`,
-                  currentLanguage
-                );
+                const msg = {
+                  [AppLanguage.DARIJA]: `أهلاً بك يا ${user.displayName}. رصيدك ${user.earnings} درهم.`,
+                  [AppLanguage.TAMAZIGHT]: `Azul ${user.displayName}. Earnings nnek gant ${user.earnings} DH.`,
+                  [AppLanguage.FRENCH]: `Bienvenue ${user.displayName}. Votre solde est de ${user.earnings} DH.`,
+                  [AppLanguage.ENGLISH]: `Welcome ${user.displayName}. Your balance is ${user.earnings} DH.`
+                }[currentLanguage];
+                speakText(msg, currentLanguage);
               } else {
-                speakText(
-                  currentLanguage === AppLanguage.DARIJA ? 'اضغط لفتح حسابك.' : 'Cliquez pour créer votre compte artisan.',
-                  currentLanguage
-                );
+                const msg = {
+                  [AppLanguage.DARIJA]: 'اضغط لفتح حسابك.',
+                  [AppLanguage.TAMAZIGHT]: 'Ouy\'ed ad tsijled account nnek.',
+                  [AppLanguage.FRENCH]: 'Cliquez pour créer votre compte artisan.',
+                  [AppLanguage.ENGLISH]: 'Click to create your artisan account.'
+                }[currentLanguage];
+                speakText(msg, currentLanguage);
               }
             }}
             className={`pie-profile-btn ${activeTab === 'profile' ? 'active' : ''}`}
@@ -266,138 +310,13 @@ export default function App() {
 
         {/* HOME */}
         {activeTab === 'home' && (
-          <section className="pie-hero animate-fadeUp" id="home-view">
-
-            {/* Welcome banner */}
-            <div className="pie-hero-banner">
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-                <span style={{ fontSize: 38 }}>🏺</span>
-                <span style={{ fontSize: 38 }}>🪡</span>
-                <span style={{ fontSize: 38 }}>🛖</span>
-              </div>
-
-              <h2 className="pie-hero-title">
-                {currentLanguage === AppLanguage.DARIJA ? 'منصة حرفة: التعلم والريادة'
-                  : currentLanguage === AppLanguage.FRENCH ? "Hirfa : L'Artisanat & Apprentissage"
-                  : 'Hirfa: Crafts & Skill-Learning'}
-              </h2>
-
-              <p className="pie-hero-copy">
-                {currentLanguage === AppLanguage.DARIJA
-                  ? 'تعلم الكروشي، الطرز الفاسي، نسيج الزرابي والفخار مع كبار الصنّاع والمعلمات، اطلب صندوق اللوازم مجهز لباب الدار وبيع منتوجاتك بكل سهولة.'
-                  : currentLanguage === AppLanguage.FRENCH
-                  ? 'La plateforme solidaire et inclusive conçue pour toutes les artisanes. Apprenez Crochet, Broderie, Tissage, Poterie — commandez vos matériaux et générez de vrais revenus.'
-                  : 'The solidarity crafts platform. Learn trades, receive supply kits, and secure financial autonomy.'}
-              </p>
-
-              {user ? (
-                <div className="pie-hero-action">
-                  <span style={{ fontSize: 14, color: 'var(--pie-brown)' }}>✨ Ahla S-sehla, <strong>{user.displayName}</strong></span>
-                  <span className="badge-terra" style={{ fontSize: 10, padding: '4px 12px' }}>{user.level}</span>
-                  <button onClick={() => setActiveTab('profile')} style={{ background: 'none', border: 'none', color: 'var(--pie-terra)', fontSize: 12, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
-                    Voir mes gains →
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setActiveTab('profile')}
-                  className="btn-terra"
-                  style={{ padding: '12px 24px' }}
-                >
-                  🚪 {currentLanguage === AppLanguage.DARIJA ? 'تفعيل حسابي كصانعة' : 'Activer mon Compte Artisan'}
-                </button>
-              )}
-            </div>
-
-            {/* ── 4 NAVIGATION CARDS ──────────────────────────────────── */}
-            <div className="pie-hero-grid stagger">
-
-              {/* LEARN */}
-              <button
-                onClick={() => { setActiveTab('learn'); speakPhrase('btn_learn', currentLanguage); }}
-                className="pie-nav-card animate-fadeUp"
-                style={{ borderColor: 'rgba(184,82,48,0.10)' }}
-              >
-                <div className="nav-card-icon" style={{ background: 'var(--pie-terra)', color: '#fff' }}>🎓</div>
-                <div>
-                  <h3 className="nav-card-title">{currentLanguage === AppLanguage.DARIJA ? 'تعلم الكروشي' : currentLanguage === AppLanguage.FRENCH ? 'Apprendre' : 'Learn'}</h3>
-                  <p className="nav-card-copy">{currentLanguage === AppLanguage.DARIJA ? 'خطوة بخطوة بالصوت' : currentLanguage === AppLanguage.FRENCH ? 'Cours avec guide vocal' : 'Animated guides'}</p>
-                </div>
-                <div className="nav-card-icon" style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(184,82,48,0.10)', color: 'var(--pie-terra)', boxShadow: 'none' }}>
-                  <Volume2 size={14} />
-                </div>
-              </button>
-
-              {/* KITS */}
-              <button
-                onClick={() => { setActiveTab('kits'); speakPhrase('btn_kits', currentLanguage); }}
-                className="pie-nav-card animate-fadeUp"
-                style={{ borderColor: 'rgba(106,143,106,0.12)' }}
-              >
-                <div className="nav-card-icon" style={{ background: 'var(--pie-sage)', color: '#fff' }}>📦</div>
-                <div>
-                  <h3 className="nav-card-title">{currentLanguage === AppLanguage.DARIJA ? 'شرا الصوندوق' : currentLanguage === AppLanguage.FRENCH ? 'Acheter un Kit' : 'Buy a Kit'}</h3>
-                  <p className="nav-card-copy">{currentLanguage === AppLanguage.DARIJA ? 'مواد مهيزة' : currentLanguage === AppLanguage.FRENCH ? 'Matériel livré' : 'Materials'}</p>
-                </div>
-                <div className="nav-card-icon" style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(106,143,106,0.12)', color: 'var(--pie-sage-dark)', boxShadow: 'none' }}>
-                  <Volume2 size={14} />
-                </div>
-              </button>
-
-              {/* MARKETPLACE */}
-              <button
-                onClick={() => { setActiveTab('marketplace'); speakPhrase('btn_marketplace', currentLanguage); }}
-                className="pie-nav-card animate-fadeUp"
-                style={{ borderColor: 'rgba(90,138,90,0.12)' }}
-              >
-                <div className="nav-card-icon" style={{ background: '#5A8A5A', color: '#fff' }}>🛍️</div>
-                <div>
-                  <h3 className="nav-card-title">{currentLanguage === AppLanguage.DARIJA ? 'نبيع المنتوجات ديالي' : currentLanguage === AppLanguage.FRENCH ? 'Espace Vendre & Marché' : 'Sell My Creations'}</h3>
-                  <p className="nav-card-copy">{currentLanguage === AppLanguage.DARIJA ? 'صوري وصيفطي' : currentLanguage === AppLanguage.FRENCH ? 'Prenez en photo et vendez' : 'Photo & sell instantly'}</p>
-                </div>
-                <div className="nav-card-icon" style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(90,138,90,0.12)', color: '#4A7A4A', boxShadow: 'none' }}>
-                  <Volume2 size={14} />
-                </div>
-              </button>
-
-              {/* COMMUNITY */}
-              <button
-                onClick={() => {
-                  setActiveTab('community');
-                  speakText(
-                    currentLanguage === AppLanguage.DARIJA
-                      ? 'ساحة المعلمات والتضامن. تواصلو بالصوت وبلا كتابة.'
-                      : "Entrez dans la place d'entraide vocale des artisanes.",
-                    currentLanguage
-                  );
-                }}
-                className="pie-nav-card animate-fadeUp"
-                style={{ borderColor: 'rgba(160,90,60,0.10)' }}
-              >
-                <div className="nav-card-icon" style={{ background: '#A05A3C', color: '#fff' }}>🤝</div>
-                <div>
-                  <h3 className="nav-card-title">{currentLanguage === AppLanguage.DARIJA ? 'ساحة التضامن والزغاريد' : currentLanguage === AppLanguage.FRENCH ? "Mural d'Entraide & Partage" : 'Community Wall'}</h3>
-                  <p className="nav-card-copy">{currentLanguage === AppLanguage.DARIJA ? 'تشاركي بالصوت وبلا قراية' : currentLanguage === AppLanguage.FRENCH ? 'Discutez par messages vocaux' : 'Voice messages & cheers'}</p>
-                </div>
-                <div className="nav-card-icon" style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(160,90,60,0.12)', color: '#A05A3C', boxShadow: 'none' }}>
-                  <Volume2 size={14} />
-                </div>
-              </button>
-            </div>
-
-            {/* ── COOPERATIVE FOOTER ──────────────────────────────────── */}
-            <div className="pie-footer-panel">
-              <h3>
-                <span>🇲🇦</span>
-                <span>{currentLanguage === AppLanguage.DARIJA ? 'تعاونية الأنامل الذهبية الموحدة' : 'Coopérative Locale de Projet PIE'}</span>
-              </h3>
-              <p>
-                {currentLanguage === AppLanguage.DARIJA
-                  ? 'مشروع تضامني يدعم الفتيات والنساء الحرفيات فالمغرب لتشجيع الرواج الاقتصادي والصناعة التقليدية.'
-                  : "Une initiative solidaire pour valoriser la broderie artisanale marocaine et l'indépendance financière des couturières."}
-              </p>
-            </div>
-          </section>
+          <HomeCenter
+            currentLanguage={currentLanguage}
+            user={user}
+            onNavigate={(tab) => setActiveTab(tab as any)}
+            onAddToCart={handleVoiceCartAdd}
+            onChangeLanguage={setCurrentLanguage}
+          />
         )}
 
         {activeTab === 'learn' && (

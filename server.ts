@@ -22,7 +22,7 @@ interface ServerProduct {
   voiceMemoUrl?: string;
 }
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const DB_FILE = path.join(process.cwd(), 'db.json');
 
 // Initialize default database records
@@ -49,7 +49,7 @@ const DEFAULT_DB = {
         { ar: "إبرة بلاستيكية لجمع الخيط", tmz: "Needle n'Plastik", fr: "Aiguille à laine en plastique", en: "Plastic finishing needle" },
         { ar: "بطاقات اللمس التفسيرية", tmz: "Tewlafin l'maâlma", fr: "Fiches tactiles de points en relief", en: "Tactile stitch guides with visual relief" }
       ],
-      imageUrl: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=600",
+      imageUrl: "/assets/kit_coco_crochet.jpg",
       colorHex: "#F5F5DC"
     },
     {
@@ -73,7 +73,7 @@ const DEFAULT_DB = {
         { ar: "ثوب كتان مرسوم عليه الطرز", tmz: "Thoub n l'kettan l'mersoum", fr: "Toile de lin avec motif pré-tracé", en: "Natural linen canvas with pre-transferred motif" },
         { ar: "إبر تطريز فولاذية", tmz: "Insk n krouchi", fr: "Assortiment d'aiguilles de précision", en: "Professional metal needles kit" }
       ],
-      imageUrl: "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&q=80&w=600",
+      imageUrl: "/assets/kit_passion_cerise.png",
       colorHex: "#8B0000"
     },
     {
@@ -97,7 +97,7 @@ const DEFAULT_DB = {
         { ar: "المشط الخشبي التقليدي للضغط", tmz: "Agelzim n ssof", fr: "Peigne à tisser traditionnel en bois", en: "Traditional wooden weaving comb" },
         { ar: "دليل صوتي مسجل في شريحة", tmz: "Imesra' d saout", fr: "Livre de motifs géométriques et guide", en: "Geometric pattern templates guide" }
       ],
-      imageUrl: "https://images.unsplash.com/photo-1598257006458-087169a1f08d?auto=format&fit=crop&q=80&w=600",
+      imageUrl: "/assets/kit_atlas_royal.png",
       colorHex: "#FF4500"
     }
   ],
@@ -648,7 +648,10 @@ function fallbackVoiceRouting(transcript: string): any {
     text.includes('krouchi') || text.includes('crochet') || text.includes('tizgawt') || 
     text.includes('tixri') || text.includes('apprendre') || text.includes('cours') || 
     text.includes('lmmed') || text.includes('darss') || text.includes('comment') ||
-    text.includes('s\'entrainer')
+    text.includes('s\'entrainer') || text.includes('كروشي') || text.includes('تعلم') ||
+    text.includes('درس') || text.includes('دروس') || text.includes('تعليم') ||
+    text.includes('حرفة') || text.includes('طرز') || text.includes('نسج') ||
+    text.includes('فخار')
   ) {
     return {
       action: 'navigate',
@@ -666,7 +669,10 @@ function fallbackVoiceRouting(transcript: string): any {
     text.includes('kit') || text.includes('box') || text.includes('coffret') || 
     text.includes('chra') || text.includes('acheter') || text.includes('boutique') || 
     text.includes('ssof') || text.includes('laine') || text.includes('sandouk') ||
-    text.includes('panier') || text.includes('asg')
+    text.includes('panier') || text.includes('asg') || text.includes('صندوق') ||
+    text.includes('صناديق') || text.includes('شراء') || text.includes('نشري') ||
+    text.includes('شري') || text.includes('سلة') || text.includes('سلّة') ||
+    text.includes('علبة')
   ) {
     return {
       action: 'navigate',
@@ -684,7 +690,9 @@ function fallbackVoiceRouting(transcript: string): any {
     text.includes('souk') || text.includes('souq') || text.includes('vendre') || 
     text.includes('marché') || text.includes('bi\'e') || text.includes('bi3') || 
     text.includes('creations') || text.includes('mariage') || text.includes('tzenz') ||
-    text.includes('artisanat') || text.includes('maâlma')
+    text.includes('artisanat') || text.includes('maâlma') || text.includes('سوق') ||
+    text.includes('بيع') || text.includes('نبيع') || text.includes('مارشي') ||
+    text.includes('عرض') || text.includes('دكان')
   ) {
     return {
       action: 'navigate',
@@ -702,7 +710,9 @@ function fallbackVoiceRouting(transcript: string): any {
     text.includes('entraide') || text.includes('tadamoun') || text.includes('solidarite') || 
     text.includes('community') || text.includes('cooperative') || text.includes('zghrouta') || 
     text.includes('zgharit') || text.includes('زغاريد') || text.includes('تضامن') ||
-    text.includes('مساعدة') || text.includes('تواصل') || text.includes('جمعية')
+    text.includes('مساعدة') || text.includes('تواصل') || text.includes('جمعية') ||
+    text.includes('تعاون') || text.includes('زغروتة') || text.includes('مشاركة') ||
+    text.includes('منشور')
   ) {
     return {
       action: 'navigate',
@@ -716,7 +726,11 @@ function fallbackVoiceRouting(transcript: string): any {
     };
   }
 
-  if (text.includes('sync') || text.includes('synchro') || text.includes('nettoyer') || text.includes('connect')) {
+  if (
+    text.includes('sync') || text.includes('synchro') || text.includes('nettoyer') || 
+    text.includes('connect') || text.includes('تزامن') || text.includes('تحديث') ||
+    text.includes('حفظ')
+  ) {
     return {
       action: 'sync',
       voiceResponse: {

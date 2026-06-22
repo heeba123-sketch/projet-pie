@@ -63,23 +63,47 @@ export const KitCenter: React.FC<KitCenterProps> = ({
     return acc + (kit ? kit.price * curr.quantity : 0);
   }, 0);
 
+  const [estimatedDateStr, setEstimatedDateStr] = useState<string>('');
+
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phoneNumber.trim()) {
-      let voiceAlert = currentLanguage === AppLanguage.DARIJA 
-        ? "عافاك كتبي نمرة التليفون ديالك باش نتصلو بيك." 
-        : "S'il vous plaît, saisissez votre numéro de téléphone pour l'expédition.";
+      let voiceAlert = {
+        [AppLanguage.DARIJA]: "عافاك كتبي نمرة التليفون ديالك باش نتصلو بيك.",
+        [AppLanguage.TAMAZIGHT]: "Sghem phone nnek a'afak bac ad nettasel.",
+        [AppLanguage.FRENCH]: "S'il vous plaît, saisissez votre numéro de téléphone pour l'expédition.",
+        [AppLanguage.ENGLISH]: "Please enter your phone number for delivery."
+      }[currentLanguage];
       speakText(voiceAlert, currentLanguage);
       return;
     }
 
+    const deliveryDate = new Date();
+    deliveryDate.setDate(deliveryDate.getDate() + 3);
+    const dateStr = deliveryDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    setEstimatedDateStr(dateStr);
+
+    const orderId = `ord-${Date.now()}`;
     const orderPayload = {
+      id: orderId,
       items: cart,
       phone: phoneNumber,
       customerNotes: `Commande par ${customerName || 'Artisane'}`,
       date: new Date().toISOString(),
+      estimatedDelivery: dateStr,
       userLanguage: currentLanguage
     };
+
+    // Dispatch real-time notification to Admin via LocalStorage
+    const existingNotifs = JSON.parse(localStorage.getItem('projet_pie_admin_notifications') || '[]');
+    existingNotifs.push({
+      id: orderId,
+      title: '📦 Nouvelle Commande de Kit',
+      message: `${customerName || 'Un client'} (${phoneNumber}) a commandé ${totalCartItems} kit(s).`,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('projet_pie_admin_notifications', JSON.stringify(existingNotifs));
+    window.dispatchEvent(new Event('storage'));
 
     if (isOffline) {
       // Offline mode caching queue
@@ -108,11 +132,19 @@ export const KitCenter: React.FC<KitCenterProps> = ({
     } else {
       setPhoneNumber(prev => prev + num);
     }
-    speakText(num === 'C' ? "Correction" : num, currentLanguage);
+    const speakVal = num === 'C'
+      ? {
+          [AppLanguage.DARIJA]: "مسح",
+          [AppLanguage.TAMAZIGHT]: "Sfed",
+          [AppLanguage.FRENCH]: "Correction",
+          [AppLanguage.ENGLISH]: "Correction"
+        }[currentLanguage]
+      : num;
+    speakText(speakVal, currentLanguage);
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-4" id="kits-gallery">
+    <div className="w-full max-w-6xl mx-auto py-4" id="kits-gallery">
       {/* Intro section */}
       <div className="text-center space-y-2 mb-8">
         <AudioHover phraseKey="btn_kits" lang={currentLanguage} showIcon={true}>
@@ -155,7 +187,7 @@ export const KitCenter: React.FC<KitCenterProps> = ({
             className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group justify-between"
           >
             {/* Image Box */}
-            <div className="relative h-48 overflow-hidden bg-slate-100">
+            <div className="relative h-64 overflow-hidden bg-slate-100">
               <img
                 src={kit.imageUrl}
                 alt={kit.title[currentLanguage]}
@@ -330,6 +362,15 @@ export const KitCenter: React.FC<KitCenterProps> = ({
                         : "Votre commande est bien enregistrée ! Notre conseillère de broderie vous appellera très vite par téléphone pour livrer votre box."
                     )}
                   </p>
+                  <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                    <span className="block text-[10px] font-black uppercase text-amber-600 mb-1">
+                      {currentLanguage === AppLanguage.DARIJA ? "تاريخ التحضير" : "Date de Préparation"}
+                    </span>
+                    <strong className="text-sm text-slate-800">
+                      {currentLanguage === AppLanguage.DARIJA ? "هاد الطلب غايوجد نهار" : "Cette commande sera prête le"} <br/>
+                      <span className="text-emerald-600">{estimatedDateStr}</span>
+                    </strong>
+                  </div>
                 </div>
                 
                 <button
