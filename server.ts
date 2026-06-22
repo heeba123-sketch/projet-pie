@@ -591,7 +591,7 @@ function saveDb() {
 
 loadDb();
 
-const LARAVEL_API_URL = 'http://127.0.0.1:8000/api';
+const LARAVEL_API_URL = process.env.LARAVEL_API_URL || 'http://127.0.0.1:8000/api';
 
 async function forwardToLaravel(req: express.Request, res: express.Response, path: string, method: string = 'GET', body: any = null): Promise<any | null> {
   try {
